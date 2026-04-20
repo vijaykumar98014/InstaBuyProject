@@ -4,6 +4,7 @@ import { inventoryAPI, orderAPI } from "../../services/api";
 import Navbar from "../../components/Navbar/Navbar";
 import { toast } from "react-toastify";
 import ConfirmModal from "../../components/ConfirmModal/ConfirmModal";
+import InventoryProductCard from "../../components/InventoryProductCard/InventoryProductCard";
 import "./Inventory.css";
 
 // ─── Skeleton Row 
@@ -19,6 +20,20 @@ function SkeletonRow() {
         </td>
       ))}
     </tr>
+  );
+}
+
+function ProductCardSkeleton() {
+  return (
+    <div className="inv-card-skeleton">
+      <div className="inv-card-skeleton__media" />
+      <div className="inv-card-skeleton__line inv-card-skeleton__line--title" />
+      <div className="inv-card-skeleton__line" />
+      <div className="inv-card-skeleton__footer">
+        <div className="inv-card-skeleton__price" />
+        <div className="inv-card-skeleton__button" />
+      </div>
+    </div>
   );
 }
 
@@ -223,95 +238,95 @@ function Inventory() {
           />
         </div>
 
-        {/* ── Table ────────────────────────────────────────────── */}
-        <div className="inv-table-wrap">
-          <table className="inv-table">
-            <thead>
-              <tr>
-                {["Product Name", "Price", "Stock Status", role === "ADMIN" ? "Actions" : ""].filter(Boolean).map((h) => (
-                  <th key={h}>{h}</th>
-                ))}
-              </tr>
-            </thead>
-            <tbody>
-              {loading ? (
-                Array(5).fill(0).map((_, i) => <SkeletonRow key={i} />)
-              ) : filtered.length === 0 ? (
+        {/* ── Product List ─────────────────────────────────────── */}
+        {role === "ADMIN" ? (
+          <div className="inv-table-wrap">
+            <table className="inv-table">
+              <thead>
                 <tr>
-                  <td colSpan={role === "ADMIN" ? 4 : 3}>
-                    <div className="inv-empty">
-                      <div className="inv-empty__icon">📭</div>
-                      <div className="inv-empty__title">No products found</div>
-                      <div className="inv-empty__sub">
-                        {search ? `No results for "${search}"` : "Add your first product below"}
-                      </div>
-                    </div>
-                  </td>
+                  {["Product Name", "Price", "Stock Status", "Actions"].map((h) => (
+                    <th key={h}>{h}</th>
+                  ))}
                 </tr>
-              ) : (
-                filtered.map((p, i) => {
-                  //console.log("IMAGE URL:", p.imageUrl);
-                  const { label, cls } = stockStatus(p.quantity);
-                  return (
-                    <tr
-                      key={p.id}
-                      className="inv-row"
-                      style={{ borderBottom: i < filtered.length - 1 ? "1px solid rgba(255,255,255,0.04)" : "none" }}
-                    >
-                      {/* Name */}
-                      <td>
-                        <div className="inv-product-cell">
-                          {p.imageUrl ? (
-                            <img
-                              src={p.imageUrl}
-                              alt={p.name}
-                              style={{
-                                width: "40px",
-                                height: "40px",
-                                objectFit: "cover",
-                                borderRadius: "6px"
-                              }}
-                            />
-                          ) : (
-                            <div
-                              style={{
-                                width: "40px",
-                                height: "40px",
-                                display: "flex",
-                                alignItems: "center",
-                                justifyContent: "center",
-                                fontSize: "22px",
-                                background: "rgba(255,255,255,0.05)",
-                                borderRadius: "6px"
-                              }}
-                            >
-                              📦
+              </thead>
+              <tbody>
+                {loading ? (
+                  Array(5).fill(0).map((_, i) => <SkeletonRow key={i} />)
+                ) : filtered.length === 0 ? (
+                  <tr>
+                    <td colSpan={4}>
+                      <div className="inv-empty">
+                        <div className="inv-empty__icon">📭</div>
+                        <div className="inv-empty__title">No products found</div>
+                        <div className="inv-empty__sub">
+                          {search ? `No results for "${search}"` : "Add your first product below"}
+                        </div>
+                      </div>
+                    </td>
+                  </tr>
+                ) : (
+                  filtered.map((p, i) => {
+                    //console.log("IMAGE URL:", p.imageUrl);
+                    const { label, cls } = stockStatus(p.quantity);
+                    return (
+                      <tr
+                        key={p.id}
+                        className="inv-row"
+                        style={{ borderBottom: i < filtered.length - 1 ? "1px solid rgba(255,255,255,0.04)" : "none" }}
+                      >
+                        {/* Name */}
+                        <td>
+                          <div className="inv-product-cell">
+                            {p.imageUrl ? (
+                              <img
+                                src={p.imageUrl}
+                                alt={p.name}
+                                style={{
+                                  width: "40px",
+                                  height: "40px",
+                                  objectFit: "cover",
+                                  borderRadius: "6px"
+                                }}
+                              />
+                            ) : (
+                              <div
+                                style={{
+                                  width: "40px",
+                                  height: "40px",
+                                  display: "flex",
+                                  alignItems: "center",
+                                  justifyContent: "center",
+                                  fontSize: "22px",
+                                  background: "rgba(255,255,255,0.05)",
+                                  borderRadius: "6px"
+                                }}
+                              >
+                                📦
+                              </div>
+                            )}
+                            {/* <div className="inv-product-icon">📦</div> */}
+                            <div>
+                              <div className="inv-product-name">{p.name}</div>
+                              <div className="inv-product-id">ID #{p.id}</div>
                             </div>
-                          )}
-                          {/* <div className="inv-product-icon">📦</div> */}
-                          <div>
-                            <div className="inv-product-name">{p.name}</div>
-                            <div className="inv-product-id">ID #{p.id}</div>
                           </div>
-                        </div>
-                      </td>
+                        </td>
 
-                      {/* Price */}
-                      <td>
-                        <span className="inv-price">₹{Number(p.price).toLocaleString()}</span>
-                      </td>
+                        {/* Price */}
+                        <td>
+                          <span className="inv-price">₹{Number(p.price).toLocaleString()}</span>
+                        </td>
 
-                      {/* Stock */}
-                      <td>
-                        <div className="inv-stock-cell">
-                          <span className={`inv-stock-badge ${cls}`}>{label}</span>
-                          <span className="inv-stock-qty">Qty: <b>{p.quantity}</b></span>
-                        </div>
-                      </td>
+                        {/* Stock */}
+                        <td>
+                          <div className="inv-stock-cell">
+                            <span className={`inv-stock-badge ${cls}`}>{label}</span>
+                            <span className="inv-stock-qty">Qty: <b>{p.quantity}</b></span>
+                          </div>
+                        </td>
 
-                      {/* Actions */}
-                      <td>
-                        {role === "ADMIN" ? (
+                        {/* Actions */}
+                        <td>
                           <div className="inv-actions">
                             {rowActions(p).map(({ emoji, title, cls: btnCls, action }) => (
                               <button
@@ -324,24 +339,39 @@ function Inventory() {
                               </button>
                             ))}
                           </div>
-                        ) : (
-                          <button
-                            className={`cart-btn ${p.quantity <= 0 ? "cart-btn--disabled" : "cart-btn--active"}`}
-                            onClick={() => addToCart(p)}
-                            disabled={p.quantity <= 0}
-                            title="Add to Cart"
-                          >
-                            🛒 Add to Cart
-                          </button>
-                        )}
-                      </td>
-                    </tr>
-                  );
-                })
-              )}
-            </tbody>
-          </table>
-        </div>
+                        </td>
+                      </tr>
+                    );
+                  })
+                )}
+              </tbody>
+            </table>
+          </div>
+        ) : (
+          <div className="inv-user-products">
+            {loading ? (
+              Array(8).fill(0).map((_, i) => <ProductCardSkeleton key={i} />)
+            ) : filtered.length === 0 ? (
+              <div className="inv-user-products__empty">
+                <div className="inv-empty">
+                  <div className="inv-empty__icon">📭</div>
+                  <div className="inv-empty__title">No products found</div>
+                  <div className="inv-empty__sub">
+                    {search ? `No results for "${search}"` : "Products will appear here soon"}
+                  </div>
+                </div>
+              </div>
+            ) : (
+              filtered.map((p) => (
+                <InventoryProductCard
+                  key={p.id}
+                  product={p}
+                  onAddToCart={addToCart}
+                />
+              ))
+            )}
+          </div>
+        )}
 
         {/* ── Add / Edit Form ───────────────────────────────────── */}
         {role === "ADMIN" && formOpen && (

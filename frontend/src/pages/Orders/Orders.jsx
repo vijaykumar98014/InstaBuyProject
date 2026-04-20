@@ -113,6 +113,10 @@ function OrderCard({ order, role, onCancel, onStatusUpdate, onEditOpen, onRefund
   const [open, setOpen] = useState(false);
   const [newStatus, setNewStatus] = useState(order.orderStatus || "CREATED");
 
+  useEffect(() => {
+    setNewStatus(order.orderStatus || "CREATED");
+  }, [order.orderStatus]);
+
   const items = order.items || [];
   console.log("ORDER ITEMS:", items);
   const isCancelled = order.orderStatus?.toUpperCase() === "CANCELLED";
@@ -286,11 +290,12 @@ function Orders() {
 
       if (role === "ADMIN") {
         res = await orderAPI.get("/api/order-items/admin/grouped");
-        setUsersOrders(res.data);
+        const groupedOrders = res.data || [];
+        setUsersOrders(groupedOrders);
 
         // 👇 NEW CODE
         const names = {};
-        for (let u of res.data) {
+        for (let u of groupedOrders) {
           try {
             const userRes = await userAPI.get(`/api/users/${u.userId}`);
             names[u.userId] = userRes.data.name; // ya username
@@ -299,12 +304,23 @@ function Orders() {
           }
         }
         setUserNames(names);
-        setOrders([]); // important
+
+        if (selectedUser) {
+          const refreshedUser = groupedOrders.find((u) => u.userId === selectedUser.userId);
+          if (refreshedUser) {
+            setSelectedUser(refreshedUser);
+            setOrders(refreshedUser.orders || []);
+          } else {
+            setSelectedUser(null);
+            setOrders([]);
+          }
+        } else {
+          setOrders([]);
+        }
       } else {
         res = await orderAPI.get(`/api/order-items/user/${userId}`);
+        setOrders(res.data || []);
       }
-
-      setOrders(res.data || []);
     } catch {
       toast.error("Failed to load orders");
     } finally {
