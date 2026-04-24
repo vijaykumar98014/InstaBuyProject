@@ -1,0 +1,271 @@
+/* ── Page Shell ───────────────────────────────────────────────────────────── */
+
+.myapp-page {
+  max-width: 900px;
+  margin: 0 auto;
+}
+
+/* ── Header ───────────────────────────────────────────────────────────────── */
+
+.myapp-header {
+  display: flex;
+  align-items: baseline;
+  gap: 1rem;
+  margin-bottom: 1.75rem;
+}
+
+.myapp-title {
+  font-size: 1.6rem;
+  font-weight: 700;
+  color: #1a1f36;
+}
+
+.myapp-count {
+  font-size: 0.85rem;
+  color: #6b7280;
+  background: #e9ecf5;
+  padding: 0.2rem 0.7rem;
+  border-radius: 999px;
+  font-weight: 500;
+}
+
+/* ── Loading / Error / Empty ──────────────────────────────────────────────── */
+
+.myapp-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 0.75rem;
+  min-height: 320px;
+  color: #6b7280;
+  text-align: center;
+}
+
+.myapp-state--error {
+  color: #b91c1c;
+  background: #fef2f2;
+  border: 1px solid #fca5a5;
+  border-radius: 10px;
+  padding: 2rem;
+  min-height: unset;
+}
+
+.myapp-spinner {
+  width: 36px;
+  height: 36px;
+  border: 3px solid #e5e7eb;
+  border-top-color: #3b4abf;
+  border-radius: 50%;
+  animation: spin 0.75s linear infinite;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+.myapp-empty-icon {
+  font-size: 2.5rem;
+}
+
+.myapp-empty-title {
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: #374151;
+}
+
+.myapp-empty-sub {
+  font-size: 0.875rem;
+  color: #9ca3af;
+  max-width: 320px;
+}
+
+/* ── Application List ─────────────────────────────────────────────────────── */
+
+.myapp-list {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+/* ── Application Card ─────────────────────────────────────────────────────── */
+
+.myapp-card {
+  background: #ffffff;
+  border: 1px solid #e5e7eb;
+  border-radius: 12px;
+  padding: 1.25rem 1.5rem;
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 1.5rem;
+  transition: box-shadow 0.2s;
+}
+
+.myapp-card:hover {
+  box-shadow: 0 4px 16px rgba(59, 74, 191, 0.08);
+}
+
+/* ── Left Section ─────────────────────────────────────────────────────────── */
+
+.myapp-card-left {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+}
+
+.myapp-job-title {
+  font-size: 1rem;
+  font-weight: 700;
+  color: #1a1f36;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.myapp-company {
+  font-size: 0.85rem;
+  color: #6b7280;
+}
+
+.myapp-meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem;
+  margin-top: 0.35rem;
+}
+
+.myapp-meta-item {
+  font-size: 0.8rem;
+  color: #4b5563;
+  background: #f3f4f6;
+  padding: 0.2rem 0.6rem;
+  border-radius: 6px;
+}
+
+/* ── Right Section ────────────────────────────────────────────────────────── */
+
+.myapp-card-right {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 0.65rem;
+  flex-shrink: 0;
+}
+
+/* ── Status Badge ─────────────────────────────────────────────────────────── */
+
+.myapp-status-badge {
+  font-size: 0.75rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  padding: 0.3rem 0.8rem;
+  border-radius: 999px;
+  white-space: nowrap;
+}
+
+.status--applied {
+  background: #dbeafe;
+  color: #1e40af;
+}
+
+.status--reviewing {
+  background: #fef3c7;
+  color: #92400e;
+}
+
+.status--shortlisted {
+  background: #ede9fe;
+  color: #5b21b6;
+}
+
+.status--interviewed {
+  background: #cffafe;
+  color: #155e75;
+}
+
+.status--offered {
+  background: #d1fae5;
+  color: #065f46;
+}
+
+.status--rejected {
+  background: #fee2e2;
+  color: #991b1b;
+}
+
+.status--default {
+  background: #f3f4f6;
+  color: #6b7280;
+}
+
+/* ── Dates ────────────────────────────────────────────────────────────────── */
+
+.myapp-dates {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+  text-align: right;
+}
+
+.myapp-date-row {
+  display: flex;
+  gap: 0.5rem;
+  align-items: center;
+  justify-content: flex-end;
+}
+
+.myapp-date-label {
+  font-size: 0.75rem;
+  color: #9ca3af;
+  white-space: nowrap;
+}
+
+.myapp-date-val {
+  font-size: 0.8rem;
+  font-weight: 500;
+  color: #374151;
+  white-space: nowrap;
+}
+
+/* ── Remarks ──────────────────────────────────────────────────────────────── */
+
+.myapp-remarks {
+  font-size: 0.8rem;
+  color: #6b7280;
+  background: #f9fafb;
+  border: 1px solid #e5e7eb;
+  border-radius: 6px;
+  padding: 0.4rem 0.7rem;
+  max-width: 260px;
+  text-align: right;
+}
+
+/* ── Responsive ───────────────────────────────────────────────────────────── */
+
+@media (max-width: 640px) {
+  .myapp-card {
+    flex-direction: column;
+    gap: 1rem;
+  }
+
+  .myapp-card-right {
+    align-items: flex-start;
+  }
+
+  .myapp-dates {
+    text-align: left;
+  }
+
+  .myapp-date-row {
+    justify-content: flex-start;
+  }
+
+  .myapp-remarks {
+    text-align: left;
+    max-width: 100%;
+  }
+}

@@ -1,0 +1,544 @@
+/* ── Page Shell ───────────────────────────────────────────────────────────── */
+
+.ma-page {
+  max-width: 960px;
+  margin: 0 auto;
+}
+
+/* ── Header ───────────────────────────────────────────────────────────────── */
+
+.ma-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 1rem;
+  margin-bottom: 1.5rem;
+  flex-wrap: wrap;
+}
+
+.ma-title {
+  font-size: 1.6rem;
+  font-weight: 700;
+  color: #1a1f36;
+  margin-bottom: 0.25rem;
+}
+
+.ma-subtitle {
+  font-size: 0.875rem;
+  color: #6b7280;
+}
+
+.ma-total-badge {
+  font-size: 0.82rem;
+  font-weight: 500;
+  background: #e9ecf5;
+  color: #4b5563;
+  padding: 0.3rem 0.8rem;
+  border-radius: 999px;
+  white-space: nowrap;
+  align-self: center;
+}
+
+/* ── Toolbar ──────────────────────────────────────────────────────────────── */
+
+.ma-toolbar {
+  display: flex;
+  gap: 0.75rem;
+  margin-bottom: 1.25rem;
+  flex-wrap: wrap;
+}
+
+.ma-search {
+  flex: 1;
+  min-width: 200px;
+  padding: 0.6rem 0.9rem;
+  border: 1.5px solid #d1d5db;
+  border-radius: 8px;
+  font-size: 0.9rem;
+  color: #1a1f36;
+  background: #fff;
+  outline: none;
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+.ma-search:focus {
+  border-color: #7b8cde;
+  box-shadow: 0 0 0 3px rgba(123, 140, 222, 0.15);
+}
+
+.ma-search::placeholder {
+  color: #9ca3af;
+}
+
+.ma-filter-select {
+  padding: 0.6rem 0.9rem;
+  border: 1.5px solid #d1d5db;
+  border-radius: 8px;
+  font-size: 0.9rem;
+  color: #374151;
+  background: #fff;
+  outline: none;
+  cursor: pointer;
+  appearance: none;
+  transition: border-color 0.2s;
+}
+
+.ma-filter-select:focus {
+  border-color: #7b8cde;
+}
+
+/* ── States ───────────────────────────────────────────────────────────────── */
+
+.ma-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 0.75rem;
+  min-height: 260px;
+  color: #6b7280;
+  text-align: center;
+}
+
+.ma-state--error {
+  color: #b91c1c;
+  background: #fef2f2;
+  border: 1px solid #fca5a5;
+  border-radius: 10px;
+  padding: 2rem;
+  min-height: unset;
+}
+
+.ma-spinner {
+  width: 36px;
+  height: 36px;
+  border: 3px solid #e5e7eb;
+  border-top-color: #3b4abf;
+  border-radius: 50%;
+  animation: spin 0.75s linear infinite;
+}
+
+.ma-saving-spinner {
+  width: 16px;
+  height: 16px;
+  border: 2px solid #d1d5db;
+  border-top-color: #3b4abf;
+  border-radius: 50%;
+  animation: spin 0.7s linear infinite;
+  display: inline-block;
+  flex-shrink: 0;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+.ma-empty {
+  color: #9ca3af;
+  font-size: 0.95rem;
+}
+
+/* ── Application List ─────────────────────────────────────────────────────── */
+
+.ma-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+/* ── Application Card ─────────────────────────────────────────────────────── */
+
+.ma-card {
+  background: #fff;
+  border: 1px solid #e5e7eb;
+  border-radius: 12px;
+  overflow: hidden;
+  transition: box-shadow 0.2s;
+}
+
+.ma-card:hover {
+  box-shadow: 0 3px 12px rgba(0, 0, 0, 0.06);
+}
+
+/* ── Card Top (always visible, clickable) ─────────────────────────────────── */
+
+.ma-card-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 1rem 1.25rem;
+  cursor: pointer;
+  gap: 1rem;
+  user-select: none;
+}
+
+.ma-card-top:hover {
+  background: #fafafa;
+}
+
+.ma-card-info {
+  display: flex;
+  flex-direction: column;
+  gap: 0.2rem;
+  min-width: 0;
+}
+
+.ma-applicant-name {
+  font-size: 0.975rem;
+  font-weight: 700;
+  color: #1a1f36;
+}
+
+.ma-applicant-email {
+  font-size: 0.8rem;
+  color: #6b7280;
+}
+
+.ma-job-label {
+  font-size: 0.82rem;
+  color: #3b4abf;
+  font-weight: 500;
+  margin-top: 0.1rem;
+}
+
+.ma-card-meta {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  flex-shrink: 0;
+}
+
+.ma-applied-date {
+  font-size: 0.78rem;
+  color: #9ca3af;
+  white-space: nowrap;
+}
+
+.ma-expand-icon {
+  font-size: 0.7rem;
+  color: #9ca3af;
+}
+
+/* ── Status Badges ────────────────────────────────────────────────────────── */
+
+.ma-badge {
+  font-size: 0.72rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  padding: 0.25rem 0.65rem;
+  border-radius: 999px;
+  white-space: nowrap;
+}
+
+.badge--applied     { background: #dbeafe; color: #1e40af; }
+.badge--reviewing   { background: #fef3c7; color: #92400e; }
+.badge--shortlisted { background: #ede9fe; color: #5b21b6; }
+.badge--interviewed { background: #cffafe; color: #155e75; }
+.badge--offered     { background: #d1fae5; color: #065f46; }
+.badge--rejected    { background: #fee2e2; color: #991b1b; }
+
+/* ── Expanded Panel ───────────────────────────────────────────────────────── */
+
+.ma-card-expanded {
+  border-top: 1px solid #f3f4f6;
+  padding: 1.1rem 1.25rem;
+  background: #fafbff;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+/* ── Detail Grid ──────────────────────────────────────────────────────────── */
+
+.ma-detail-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+  gap: 0.75rem;
+}
+
+.ma-detail-item {
+  display: flex;
+  flex-direction: column;
+  gap: 0.2rem;
+}
+
+.ma-detail-item--full {
+  grid-column: 1 / -1;
+}
+
+.ma-detail-label {
+  font-size: 0.75rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: #9ca3af;
+}
+
+.ma-detail-val {
+  font-size: 0.875rem;
+  color: #374151;
+}
+
+/* ── Actions ──────────────────────────────────────────────────────────────── */
+
+.ma-actions {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+}
+
+.ma-action-controls {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  flex-wrap: wrap;
+  margin-left: auto;
+}
+
+.ma-row-feedback {
+  font-size: 0.82rem;
+  font-weight: 500;
+  padding: 0.3rem 0.7rem;
+  border-radius: 6px;
+}
+
+.ma-row-feedback--success {
+  background: #d1fae5;
+  color: #065f46;
+}
+
+.ma-row-feedback--error {
+  background: #fef2f2;
+  color: #b91c1c;
+}
+
+.ma-status-select {
+  padding: 0.5rem 0.8rem;
+  border: 1.5px solid #d1d5db;
+  border-radius: 8px;
+  font-size: 0.875rem;
+  color: #1a1f36;
+  background: #fff;
+  outline: none;
+  cursor: pointer;
+  appearance: none;
+  transition: border-color 0.2s;
+}
+
+.ma-status-select:focus {
+  border-color: #7b8cde;
+}
+
+.ma-status-select:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.ma-interview-btn {
+  padding: 0.5rem 1.1rem;
+  background: #fff;
+  border: 1.5px solid #7b8cde;
+  color: #3b4abf;
+  font-size: 0.875rem;
+  font-weight: 600;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background 0.2s;
+  white-space: nowrap;
+}
+
+.ma-interview-btn:hover:not(:disabled) {
+  background: #eef0ff;
+}
+
+.ma-interview-btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+/* ── Modal Overlay ────────────────────────────────────────────────────────── */
+
+.ma-modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.4);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  padding: 1rem;
+}
+
+.ma-modal {
+  background: #fff;
+  border-radius: 14px;
+  width: 100%;
+  max-width: 480px;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.2);
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.ma-modal-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 1.1rem 1.5rem;
+  border-bottom: 1px solid #f3f4f6;
+}
+
+.ma-modal-title {
+  font-size: 1.05rem;
+  font-weight: 700;
+  color: #1a1f36;
+}
+
+.ma-modal-close {
+  background: none;
+  border: none;
+  font-size: 1rem;
+  color: #9ca3af;
+  cursor: pointer;
+  line-height: 1;
+  padding: 0.25rem;
+  border-radius: 4px;
+  transition: color 0.15s;
+}
+
+.ma-modal-close:hover {
+  color: #374151;
+}
+
+.ma-modal-body {
+  padding: 1.25rem 1.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.ma-modal-footer {
+  display: flex;
+  justify-content: flex-end;
+  gap: 0.75rem;
+  padding: 1rem 1.5rem;
+  border-top: 1px solid #f3f4f6;
+  background: #fafafa;
+}
+
+/* ── Modal Buttons ────────────────────────────────────────────────────────── */
+
+.ma-btn {
+  padding: 0.6rem 1.3rem;
+  font-size: 0.875rem;
+  font-weight: 600;
+  border-radius: 8px;
+  cursor: pointer;
+  border: none;
+  transition: background 0.2s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.4rem;
+  min-width: 110px;
+  min-height: 38px;
+}
+
+.ma-btn--cancel {
+  background: #f3f4f6;
+  color: #374151;
+  border: 1px solid #d1d5db;
+}
+
+.ma-btn--cancel:hover {
+  background: #e5e7eb;
+}
+
+.ma-btn--confirm {
+  background: #3b4abf;
+  color: #fff;
+}
+
+.ma-btn--confirm:hover:not(:disabled) {
+  background: #2f3d9e;
+}
+
+.ma-btn--confirm:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+/* ── Shared Form Styles ───────────────────────────────────────────────────── */
+
+.form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+}
+
+.form-label {
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: #374151;
+}
+
+.required {
+  color: #ef4444;
+  margin-left: 2px;
+}
+
+.form-input {
+  padding: 0.65rem 0.9rem;
+  border: 1.5px solid #d1d5db;
+  border-radius: 8px;
+  font-size: 0.9rem;
+  color: #1a1f36;
+  background: #fafafa;
+  outline: none;
+  appearance: none;
+  transition: border-color 0.2s, box-shadow 0.2s;
+  width: 100%;
+}
+
+.form-input:focus {
+  border-color: #7b8cde;
+  background: #fff;
+  box-shadow: 0 0 0 3px rgba(123, 140, 222, 0.15);
+}
+
+.form-textarea {
+  resize: vertical;
+  min-height: 80px;
+  line-height: 1.55;
+}
+
+/* ── Responsive ───────────────────────────────────────────────────────────── */
+
+@media (max-width: 640px) {
+  .ma-card-top {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .ma-card-meta {
+    flex-wrap: wrap;
+  }
+
+  .ma-actions {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .ma-action-controls {
+    margin-left: 0;
+    width: 100%;
+  }
+
+  .ma-status-select,
+  .ma-interview-btn {
+    flex: 1;
+  }
+}

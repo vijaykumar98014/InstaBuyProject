@@ -1,0 +1,242 @@
+/* ── Page Shell ───────────────────────────────────────────────────────────── */
+
+.cj-page {
+  max-width: 860px;
+  margin: 0 auto;
+}
+
+/* ── Page Header ──────────────────────────────────────────────────────────── */
+
+.cj-header {
+  margin-bottom: 1.75rem;
+}
+
+.cj-title {
+  font-size: 1.6rem;
+  font-weight: 700;
+  color: #1a1f36;
+  margin-bottom: 0.3rem;
+}
+
+.cj-subtitle {
+  font-size: 0.875rem;
+  color: #6b7280;
+}
+
+/* ── Alert Banners ────────────────────────────────────────────────────────── */
+
+.cj-alert {
+  padding: 0.75rem 1rem;
+  border-radius: 8px;
+  font-size: 0.875rem;
+  font-weight: 500;
+  margin-bottom: 1.25rem;
+}
+
+.cj-alert--error {
+  background: #fef2f2;
+  border: 1px solid #fca5a5;
+  color: #b91c1c;
+}
+
+.cj-alert--success {
+  background: #f0fdf4;
+  border: 1px solid #86efac;
+  color: #166534;
+}
+
+/* ── Form ─────────────────────────────────────────────────────────────────── */
+
+.cj-form {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+/* ── Section Card ─────────────────────────────────────────────────────────── */
+
+.cj-section {
+  background: #ffffff;
+  border: 1px solid #e5e7eb;
+  border-radius: 12px;
+  padding: 1.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1.1rem;
+}
+
+.cj-section-title {
+  font-size: 0.95rem;
+  font-weight: 700;
+  color: #374151;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  padding-bottom: 0.75rem;
+  border-bottom: 1px solid #f3f4f6;
+}
+
+/* ── Row Layout (2 columns) ───────────────────────────────────────────────── */
+
+.cj-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1rem;
+}
+
+.cj-row--single {
+  grid-template-columns: 1fr;
+  max-width: 280px;
+}
+
+/* ── Form Group ───────────────────────────────────────────────────────────── */
+
+.form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+}
+
+.form-label {
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: #374151;
+}
+
+.required {
+  color: #ef4444;
+  margin-left: 2px;
+}
+
+.form-hint {
+  font-size: 0.78rem;
+  font-weight: 400;
+  color: #9ca3af;
+  margin-left: 0.35rem;
+}
+
+/* ── Inputs ───────────────────────────────────────────────────────────────── */
+
+.form-input {
+  padding: 0.65rem 0.9rem;
+  border: 1.5px solid #d1d5db;
+  border-radius: 8px;
+  font-size: 0.9rem;
+  color: #1a1f36;
+  background: #fafafa;
+  outline: none;
+  transition: border-color 0.2s, box-shadow 0.2s;
+  appearance: none;
+  width: 100%;
+}
+
+.form-input:focus {
+  border-color: #7b8cde;
+  background: #fff;
+  box-shadow: 0 0 0 3px rgba(123, 140, 222, 0.15);
+}
+
+.form-input::placeholder {
+  color: #9ca3af;
+}
+
+.form-input--short {
+  max-width: 120px;
+}
+
+.form-textarea {
+  resize: vertical;
+  min-height: 90px;
+  line-height: 1.55;
+}
+
+/* ── Actions Bar ──────────────────────────────────────────────────────────── */
+
+.cj-actions {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 0.75rem;
+  padding-top: 0.5rem;
+}
+
+/* ── Buttons ──────────────────────────────────────────────────────────────── */
+
+.cj-btn {
+  padding: 0.65rem 1.5rem;
+  font-size: 0.9rem;
+  font-weight: 600;
+  border-radius: 8px;
+  cursor: pointer;
+  border: none;
+  transition: background 0.2s, transform 0.1s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 140px;
+  min-height: 42px;
+}
+
+.cj-btn--primary {
+  background-color: #3b4abf;
+  color: #fff;
+}
+
+.cj-btn--primary:hover:not(:disabled) {
+  background-color: #2f3d9e;
+}
+
+.cj-btn--secondary {
+  background-color: #f3f4f6;
+  color: #374151;
+  border: 1px solid #d1d5db;
+}
+
+.cj-btn--secondary:hover:not(:disabled) {
+  background-color: #e5e7eb;
+}
+
+.cj-btn:active:not(:disabled) {
+  transform: scale(0.97);
+}
+
+.cj-btn:disabled {
+  opacity: 0.65;
+  cursor: not-allowed;
+}
+
+/* ── Spinner ──────────────────────────────────────────────────────────────── */
+
+.cj-spinner {
+  width: 17px;
+  height: 17px;
+  border: 2.5px solid rgba(255, 255, 255, 0.4);
+  border-top-color: #fff;
+  border-radius: 50%;
+  animation: spin 0.7s linear infinite;
+  display: inline-block;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+/* ── Responsive ───────────────────────────────────────────────────────────── */
+
+@media (max-width: 640px) {
+  .cj-row {
+    grid-template-columns: 1fr;
+  }
+
+  .cj-row--single {
+    max-width: 100%;
+  }
+
+  .cj-actions {
+    flex-direction: column-reverse;
+    align-items: stretch;
+  }
+
+  .cj-btn {
+    width: 100%;
+  }
+}

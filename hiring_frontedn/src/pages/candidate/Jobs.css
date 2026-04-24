@@ -1,0 +1,288 @@
+/* ── Page Shell ───────────────────────────────────────────────────────────── */
+
+.jobs-page {
+  max-width: 1100px;
+  margin: 0 auto;
+}
+
+/* ── Header ───────────────────────────────────────────────────────────────── */
+
+.jobs-header {
+  display: flex;
+  align-items: baseline;
+  gap: 1rem;
+  margin-bottom: 1.75rem;
+}
+
+.jobs-title {
+  font-size: 1.6rem;
+  font-weight: 700;
+  color: #1a1f36;
+}
+
+.jobs-count {
+  font-size: 0.85rem;
+  color: #6b7280;
+  background: #e9ecf5;
+  padding: 0.2rem 0.7rem;
+  border-radius: 999px;
+  font-weight: 500;
+}
+
+/* ── Loading / Error / Empty states ──────────────────────────────────────── */
+
+.jobs-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 1rem;
+  min-height: 300px;
+  color: #6b7280;
+  font-size: 0.95rem;
+}
+
+.jobs-state--error {
+  color: #b91c1c;
+  background: #fef2f2;
+  border: 1px solid #fca5a5;
+  border-radius: 10px;
+  padding: 2rem;
+  min-height: unset;
+}
+
+.jobs-empty {
+  color: #9ca3af;
+  font-size: 1rem;
+}
+
+.jobs-spinner {
+  width: 36px;
+  height: 36px;
+  border: 3px solid #e5e7eb;
+  border-top-color: #3b4abf;
+  border-radius: 50%;
+  animation: spin 0.75s linear infinite;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+/* ── Grid ─────────────────────────────────────────────────────────────────── */
+
+.jobs-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+  gap: 1.25rem;
+}
+
+/* ── Job Card ─────────────────────────────────────────────────────────────── */
+
+.job-card {
+  background: #ffffff;
+  border: 1px solid #e5e7eb;
+  border-radius: 12px;
+  padding: 1.4rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.9rem;
+  transition: box-shadow 0.2s, transform 0.2s;
+}
+
+.job-card:hover {
+  box-shadow: 0 6px 20px rgba(59, 74, 191, 0.1);
+  transform: translateY(-2px);
+}
+
+/* ── Card Header ──────────────────────────────────────────────────────────── */
+
+.job-card-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 0.75rem;
+}
+
+.job-title {
+  font-size: 1.05rem;
+  font-weight: 700;
+  color: #1a1f36;
+  margin-bottom: 0.2rem;
+  line-height: 1.35;
+}
+
+.job-company {
+  font-size: 0.85rem;
+  color: #6b7280;
+}
+
+/* ── Status Badge ─────────────────────────────────────────────────────────── */
+
+.job-status-badge {
+  font-size: 0.72rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  padding: 0.25rem 0.65rem;
+  border-radius: 999px;
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+
+.job-status--open,
+.job-status--approved {
+  background: #d1fae5;
+  color: #065f46;
+}
+
+.job-status--pending {
+  background: #fef3c7;
+  color: #92400e;
+}
+
+.job-status--closed {
+  background: #f3f4f6;
+  color: #6b7280;
+}
+
+/* ── Meta ─────────────────────────────────────────────────────────────────── */
+
+.job-meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+.job-meta-item {
+  font-size: 0.82rem;
+  color: #4b5563;
+  background: #f3f4f6;
+  padding: 0.25rem 0.65rem;
+  border-radius: 6px;
+}
+
+/* ── Description ──────────────────────────────────────────────────────────── */
+
+.job-description {
+  font-size: 0.875rem;
+  color: #4b5563;
+  line-height: 1.6;
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+/* ── Skills ───────────────────────────────────────────────────────────────── */
+
+.job-skills {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem;
+}
+
+.job-skill-tag {
+  font-size: 0.78rem;
+  font-weight: 500;
+  color: #3b4abf;
+  background: #eef0ff;
+  border: 1px solid #c7cdf7;
+  padding: 0.2rem 0.6rem;
+  border-radius: 6px;
+}
+
+/* ── Card Footer ──────────────────────────────────────────────────────────── */
+
+.job-card-footer {
+  margin-top: auto;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+  flex-wrap: wrap;
+}
+
+/* ── Feedback Message ─────────────────────────────────────────────────────── */
+
+.job-feedback {
+  font-size: 0.82rem;
+  font-weight: 500;
+  padding: 0.3rem 0.7rem;
+  border-radius: 6px;
+}
+
+.job-feedback--success {
+  color: #065f46;
+  background: #d1fae5;
+}
+
+.job-feedback--error {
+  color: #b91c1c;
+  background: #fef2f2;
+}
+
+/* ── Apply Button ─────────────────────────────────────────────────────────── */
+
+.job-apply-btn {
+  margin-left: auto;
+  padding: 0.5rem 1.2rem;
+  background-color: #3b4abf;
+  color: #fff;
+  font-size: 0.875rem;
+  font-weight: 600;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background 0.2s, transform 0.1s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 100px;
+  min-height: 38px;
+  white-space: nowrap;
+}
+
+.job-apply-btn:hover:not(:disabled) {
+  background-color: #2f3d9e;
+}
+
+.job-apply-btn:active:not(:disabled) {
+  transform: scale(0.97);
+}
+
+.job-apply-btn:disabled {
+  opacity: 0.7;
+  cursor: not-allowed;
+  background-color: #6b7280;
+}
+
+.job-apply-btn:disabled[class*="Applied"] {
+  background-color: #059669;
+  opacity: 1;
+}
+
+/* ── Button Spinner ───────────────────────────────────────────────────────── */
+
+.btn-spinner {
+  width: 16px;
+  height: 16px;
+  border: 2px solid rgba(255, 255, 255, 0.4);
+  border-top-color: #fff;
+  border-radius: 50%;
+  animation: spin 0.7s linear infinite;
+  display: inline-block;
+}
+
+/* ── Responsive ───────────────────────────────────────────────────────────── */
+
+@media (max-width: 640px) {
+  .jobs-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .jobs-header {
+    flex-direction: column;
+    gap: 0.4rem;
+  }
+}

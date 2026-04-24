@@ -1,0 +1,358 @@
+/* ── Page Shell ───────────────────────────────────────────────────────────── */
+
+.om-page {
+  max-width: 900px;
+  margin: 0 auto;
+}
+
+/* ── Header ───────────────────────────────────────────────────────────────── */
+
+.om-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 1.75rem;
+}
+
+.om-title {
+  font-size: 1.6rem;
+  font-weight: 700;
+  color: #1a1f36;
+}
+
+.om-create-btn {
+  background: #3b4abf;
+  color: #fff;
+  font-size: 0.9rem;
+  font-weight: 600;
+  padding: 0.5rem 1rem;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.om-create-btn:hover {
+  background: #2f3d9e;
+}
+
+/* ── Loading / Error ──────────────────────────────────────────────────────── */
+
+.om-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 0.75rem;
+  min-height: 320px;
+  color: #6b7280;
+  text-align: center;
+}
+
+.om-state--error {
+  color: #b91c1c;
+  background: #fef2f2;
+  border: 1px solid #fca5a5;
+  border-radius: 10px;
+  padding: 2rem;
+  min-height: unset;
+}
+
+.om-spinner {
+  width: 36px;
+  height: 36px;
+  border: 3px solid #e5e7eb;
+  border-top-color: #3b4abf;
+  border-radius: 50%;
+  animation: spin 0.75s linear infinite;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+/* ── Offer List ───────────────────────────────────────────────────────────── */
+
+.om-list {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+/* ── Offer Card ───────────────────────────────────────────────────────────── */
+
+.om-card {
+  background: #ffffff;
+  border: 1px solid #e5e7eb;
+  border-radius: 12px;
+  padding: 1.25rem 1.5rem;
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 1.5rem;
+  transition: box-shadow 0.2s;
+}
+
+.om-card:hover {
+  box-shadow: 0 4px 16px rgba(59, 74, 191, 0.08);
+}
+
+/* ── Left Section ─────────────────────────────────────────────────────────── */
+
+.om-card-left {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+}
+
+.om-applicant-name {
+  font-size: 1rem;
+  font-weight: 700;
+  color: #1a1f36;
+}
+
+.om-job-title {
+  font-size: 0.9rem;
+  color: #6b7280;
+}
+
+.om-salary {
+  font-size: 0.9rem;
+  color: #4b5563;
+  background: #f3f4f6;
+  padding: 0.2rem 0.6rem;
+  border-radius: 6px;
+  width: fit-content;
+}
+
+/* ── Right Section ────────────────────────────────────────────────────────── */
+
+.om-card-right {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 0.5rem;
+  flex-shrink: 0;
+}
+
+/* ── Status Badge ─────────────────────────────────────────────────────────── */
+
+.om-status-badge {
+  font-size: 0.75rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  padding: 0.3rem 0.8rem;
+  border-radius: 999px;
+  white-space: nowrap;
+}
+
+.status--pending {
+  background: #fef3c7;
+  color: #92400e;
+}
+
+.status--accepted {
+  background: #d1fae5;
+  color: #065f46;
+}
+
+.status--rejected {
+  background: #fee2e2;
+  color: #991b1b;
+}
+
+.status--default {
+  background: #f3f4f6;
+  color: #6b7280;
+}
+
+/* ── Dates ────────────────────────────────────────────────────────────────── */
+
+.om-dates {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+  text-align: right;
+}
+
+.om-date-row {
+  display: flex;
+  gap: 0.5rem;
+  align-items: center;
+  justify-content: flex-end;
+}
+
+.om-date-label {
+  font-size: 0.75rem;
+  color: #9ca3af;
+  white-space: nowrap;
+}
+
+.om-date-val {
+  font-size: 0.8rem;
+  font-weight: 500;
+  color: #374151;
+  white-space: nowrap;
+}
+
+/* ── Modal ────────────────────────────────────────────────────────────────── */
+
+.om-modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+}
+
+.om-modal {
+  background: #ffffff;
+  border-radius: 12px;
+  width: 100%;
+  max-width: 500px;
+  max-height: 90vh;
+  overflow-y: auto;
+}
+
+.om-modal-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 1.5rem;
+  border-bottom: 1px solid #e5e7eb;
+}
+
+.om-modal-title {
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: #1a1f36;
+}
+
+.om-modal-close {
+  background: none;
+  border: none;
+  font-size: 1.5rem;
+  cursor: pointer;
+  color: #6b7280;
+}
+
+.om-modal-body {
+  padding: 1.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.om-modal-footer {
+  display: flex;
+  gap: 0.75rem;
+  justify-content: flex-end;
+  padding: 1.5rem;
+  border-top: 1px solid #e5e7eb;
+}
+
+.om-btn {
+  padding: 0.5rem 1rem;
+  font-size: 0.9rem;
+  font-weight: 600;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.om-btn--cancel {
+  background: #f3f4f6;
+  color: #374151;
+}
+
+.om-btn--cancel:hover {
+  background: #e5e7eb;
+}
+
+.om-btn--confirm {
+  background: #3b4abf;
+  color: #fff;
+}
+
+.om-btn--confirm:hover:not(:disabled) {
+  background: #2f3d9e;
+}
+
+.om-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+/* ── Form Styles ──────────────────────────────────────────────────────────── */
+
+.form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+}
+
+.form-label {
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: #374151;
+}
+
+.form-input {
+  padding: 0.65rem 0.9rem;
+  border: 1.5px solid #d1d5db;
+  border-radius: 8px;
+  font-size: 0.95rem;
+  color: #1a1f36;
+  background: #fafafa;
+  transition: border-color 0.2s, box-shadow 0.2s;
+  outline: none;
+}
+
+.form-input:focus {
+  border-color: #7b8cde;
+  background: #fff;
+  box-shadow: 0 0 0 3px rgba(123, 140, 222, 0.15);
+}
+
+.form-textarea {
+  resize: vertical;
+  min-height: 80px;
+}
+
+.required {
+  color: #dc2626;
+}
+
+/* ── Responsive ───────────────────────────────────────────────────────────── */
+
+@media (max-width: 640px) {
+  .om-card {
+    flex-direction: column;
+    gap: 1rem;
+  }
+
+  .om-card-right {
+    align-items: flex-start;
+  }
+
+  .om-dates {
+    text-align: left;
+  }
+
+  .om-date-row {
+    justify-content: flex-start;
+  }
+
+  .om-modal {
+    margin: 1rem;
+  }
+}

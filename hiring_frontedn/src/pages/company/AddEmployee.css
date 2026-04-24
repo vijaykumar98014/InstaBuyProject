@@ -1,0 +1,141 @@
+.add-emp-page {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: #f0f2f8;
+  padding: 1.5rem;
+}
+
+.add-emp-card {
+  background: #ffffff;
+  border-radius: 12px;
+  box-shadow: 0 4px 24px rgba(0, 0, 0, 0.08);
+  padding: 2.5rem 2rem;
+  width: 100%;
+  max-width: 420px;
+}
+
+.add-emp-header {
+  text-align: center;
+  margin-bottom: 2rem;
+}
+
+.add-emp-title {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: #1a1f36;
+  margin-bottom: 0.4rem;
+}
+
+.add-emp-subtitle {
+  font-size: 0.9rem;
+  color: #6b7280;
+}
+
+.add-emp-form {
+  display: flex;
+  flex-direction: column;
+  gap: 1.2rem;
+}
+
+.form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+}
+
+.form-label {
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: #374151;
+}
+
+.form-input {
+  padding: 0.65rem 0.9rem;
+  border: 1.5px solid #d1d5db;
+  border-radius: 8px;
+  font-size: 0.95rem;
+  color: #1a1f36;
+  background: #fafafa;
+  transition: border-color 0.2s, box-shadow 0.2s;
+  outline: none;
+  appearance: none;
+}
+
+.form-input:focus {
+  border-color: #7b8cde;
+  background: #fff;
+  box-shadow: 0 0 0 3px rgba(123, 140, 222, 0.15);
+}
+
+.form-input::placeholder {
+  color: #9ca3af;
+}
+
+.add-emp-error {
+  background-color: #fef2f2;
+  border: 1px solid #fca5a5;
+  color: #b91c1c;
+  padding: 0.65rem 0.9rem;
+  border-radius: 8px;
+  font-size: 0.875rem;
+}
+
+.add-emp-success {
+  background-color: #d1fae5;
+  border: 1px solid #a7f3d0;
+  color: #065f46;
+  padding: 0.65rem 0.9rem;
+  border-radius: 8px;
+  font-size: 0.875rem;
+}
+
+.add-emp-btn {
+  margin-top: 0.4rem;
+  padding: 0.75rem;
+  background-color: #3b4abf;
+  color: #fff;
+  font-size: 0.95rem;
+  font-weight: 600;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background 0.2s, transform 0.1s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 46px;
+}
+
+.add-emp-btn:hover:not(:disabled) {
+  background-color: #2f3d9e;
+}
+
+.add-emp-btn:active:not(:disabled) {
+  transform: scale(0.98);
+}
+
+.add-emp-btn:disabled {
+  opacity: 0.7;
+  cursor: not-allowed;
+}
+
+.add-emp-spinner {
+  width: 18px;
+  height: 18px;
+  border: 2.5px solid rgba(255, 255, 255, 0.4);
+  border-top-color: #fff;
+  border-radius: 50%;
+  animation: spin 0.7s linear infinite;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+@media (max-width: 480px) {
+  .add-emp-card {
+    padding: 2rem 1.25rem;
+  }
+}
