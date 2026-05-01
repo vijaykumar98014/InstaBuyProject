@@ -34,9 +34,6 @@ public class InventoryController {
             @RequestParam float price,
             @RequestParam int quantity,
             @RequestParam("image") MultipartFile file) {
-    	System.out.println("FILE NAME: " + file.getOriginalFilename());
-        System.out.println("FILE SIZE: " + file.getSize());
-
 
         service.addProduct(name, price, quantity, file);
         return "Product added successfully";

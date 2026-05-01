@@ -2,6 +2,7 @@ import React from 'react';
 import ReactDOM from 'react-dom/client';
 import { Provider } from "react-redux";
 import './styles/global.css';
+import './styles/responsive-utilities.css';
 import App from './App';
 import reportWebVitals from './reportWebVitals';
 import "./styles/theme.css";

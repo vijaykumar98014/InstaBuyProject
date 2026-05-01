@@ -12,6 +12,10 @@ export const orderAPI = axios.create({
   baseURL: "http://localhost:8084",
 });
 
+export const paymentAPI = axios.create({
+  baseURL: "http://localhost:8085",
+});
+
 export const setAuthToken = (token) => {
   if (token) {
     userAPI.defaults.headers.common.Authorization = `Bearer ${token}`;

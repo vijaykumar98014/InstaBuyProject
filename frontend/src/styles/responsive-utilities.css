@@ -1,0 +1,284 @@
+/* ═══════════════════════════════════════════════════════════════════════════════
+   RESPONSIVE UTILITIES & HELPERS
+   ═══════════════════════════════════════════════════════════════════════════════ */
+
+/* ── Breakpoints Used Across Application ──
+   Desktop:  > 1200px
+   Tablet:   768px - 1200px
+   Mobile:   < 768px
+   Small Mobile: < 480px
+────────────────────────────────────────── */
+
+/* ── Display Utilities ── */
+@media (max-width: 1023px) {
+  .hide-on-tablet-down {
+    display: none !important;
+  }
+}
+
+@media (max-width: 767px) {
+  .hide-on-mobile {
+    display: none !important;
+  }
+
+  .show-on-mobile {
+    display: block !important;
+  }
+}
+
+@media (max-width: 479px) {
+  .hide-on-small-mobile {
+    display: none !important;
+  }
+
+  .show-on-small-mobile {
+    display: block !important;
+  }
+}
+
+@media (min-width: 768px) {
+  .hide-on-desktop {
+    display: none !important;
+  }
+
+  .show-on-desktop {
+    display: block !important;
+  }
+}
+
+/* ── Responsive Typography ── */
+@media (max-width: 768px) {
+  .text-responsive-lg {
+    font-size: clamp(1.5rem, 4vw, 2rem) !important;
+  }
+
+  .text-responsive-md {
+    font-size: clamp(1.2rem, 3vw, 1.5rem) !important;
+  }
+
+  .text-responsive-sm {
+    font-size: clamp(0.875rem, 2vw, 1rem) !important;
+  }
+}
+
+/* ── Spacing Utilities ── */
+@media (max-width: 768px) {
+  .p-responsive-lg {
+    padding: clamp(1rem, 3vw, 1.5rem) !important;
+  }
+
+  .p-responsive-md {
+    padding: clamp(0.75rem, 2vw, 1rem) !important;
+  }
+
+  .p-responsive-sm {
+    padding: clamp(0.5rem, 1.5vw, 0.75rem) !important;
+  }
+
+  .gap-responsive-lg {
+    gap: clamp(1rem, 3vw, 1.5rem) !important;
+  }
+
+  .gap-responsive-md {
+    gap: clamp(0.75rem, 2vw, 1rem) !important;
+  }
+
+  .gap-responsive-sm {
+    gap: clamp(0.5rem, 1.5vw, 0.75rem) !important;
+  }
+}
+
+/* ── Flex Utilities ── */
+@media (max-width: 768px) {
+  .flex-col-mobile {
+    flex-direction: column !important;
+  }
+
+  .flex-center-mobile {
+    justify-content: center !important;
+    align-items: center !important;
+  }
+
+  .gap-mobile-auto {
+    gap: auto !important;
+  }
+}
+
+/* ── Grid Utilities ── */
+@media (max-width: 768px) {
+  .grid-cols-1-mobile {
+    grid-template-columns: 1fr !important;
+  }
+
+  .grid-cols-2-mobile {
+    grid-template-columns: repeat(2, 1fr) !important;
+  }
+}
+
+/* ── Width & Height Utilities ── */
+@media (max-width: 768px) {
+  .w-full-mobile {
+    width: 100% !important;
+  }
+
+  .max-w-none-mobile {
+    max-width: none !important;
+  }
+
+  .h-auto-mobile {
+    height: auto !important;
+  }
+}
+
+/* ── Overflow Utilities ── */
+.overflow-x-auto-touch {
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+}
+
+/* ── Common Responsive Patterns ── */
+@media (max-width: 768px) {
+  /* Cards Stack On Mobile */
+  .card-grid-responsive {
+    grid-template-columns: 1fr;
+    gap: 1rem;
+  }
+
+  /* Buttons Stack On Mobile */
+  .btn-group-responsive {
+    flex-direction: column;
+    width: 100%;
+  }
+
+  .btn-group-responsive > button,
+  .btn-group-responsive > a {
+    width: 100%;
+  }
+
+  /* Modals Fullscreen On Mobile */
+  .modal-responsive {
+    position: fixed;
+    inset: 0;
+    width: 100% !important;
+    height: 100% !important;
+    border-radius: 0 !important;
+    max-height: 100vh !important;
+    max-width: 100vw !important;
+  }
+
+  /* Tables Horizontal Scroll On Mobile */
+  .table-responsive-wrap {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    margin: 0 -1rem;
+    padding: 0 1rem;
+  }
+}
+
+@media (max-width: 480px) {
+  /* Extra Small Screen Adjustments */
+  .p-responsive-xs {
+    padding: clamp(0.5rem, 1vw, 0.75rem) !important;
+  }
+
+  .gap-responsive-xs {
+    gap: clamp(0.4rem, 1vw, 0.6rem) !important;
+  }
+
+  .text-responsive-xs {
+    font-size: clamp(0.75rem, 1.5vw, 0.875rem) !important;
+  }
+}
+
+/* ═══════════════════════════════════════════════════════════════════════════════
+   RESPONSIVE LAYOUT HELPERS
+   ═══════════════════════════════════════════════════════════════════════════════ */
+
+/* Container Queries Fallback */
+.container-responsive {
+  width: 100%;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+@media (max-width: 480px) {
+  .container-responsive {
+    padding: 0 0.75rem;
+  }
+}
+
+@media (max-width: 768px) {
+  .container-responsive {
+    padding: 0 1rem;
+  }
+}
+
+@media (min-width: 769px) and (max-width: 1024px) {
+  .container-responsive {
+    padding: 0 1.5rem;
+  }
+}
+
+@media (min-width: 1025px) {
+  .container-responsive {
+    max-width: 1280px;
+    padding: 0 2rem;
+  }
+}
+
+/* ═══════════════════════════════════════════════════════════════════════════════
+   ACCESSIBILITY & MOBILE IMPROVEMENTS
+   ═══════════════════════════════════════════════════════════════════════════════ */
+
+/* Touch-friendly buttons on mobile */
+@media (max-width: 768px) {
+  .btn-touch-friendly {
+    min-height: 44px;
+    min-width: 44px;
+    padding: 0.75rem 1rem;
+  }
+}
+
+/* Improve readability on small screens */
+@media (max-width: 480px) {
+  body {
+    font-size: 16px; /* Prevents iOS zoom on input focus */
+  }
+
+  input,
+  textarea,
+  select {
+    font-size: 16px; /* Prevents unintended zoom */
+  }
+}
+
+/* Safe area padding for notch devices */
+@supports (padding: max(0px)) {
+  .safe-area-padding {
+    padding-left: max(1rem, env(safe-area-inset-left));
+    padding-right: max(1rem, env(safe-area-inset-right));
+    padding-top: max(1rem, env(safe-area-inset-top));
+    padding-bottom: max(1rem, env(safe-area-inset-bottom));
+  }
+
+  .safe-area-padding-horizontal {
+    padding-left: max(1rem, env(safe-area-inset-left));
+    padding-right: max(1rem, env(safe-area-inset-right));
+  }
+}
+
+/* ═══════════════════════════════════════════════════════════════════════════════
+   PERFORMANCE & SMOOTH SCROLLING
+   ═══════════════════════════════════════════════════════════════════════════════ */
+
+@media (prefers-reduced-motion: no-preference) {
+  html {
+    scroll-behavior: smooth;
+  }
+}
+
+/* Smooth scrolling for touch devices */
+.scroll-smooth-touch {
+  -webkit-overflow-scrolling: touch;
+  scroll-behavior: smooth;
+}

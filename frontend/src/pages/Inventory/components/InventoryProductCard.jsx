@@ -7,6 +7,12 @@ function InventoryProductCard({
   onIncreaseQty,
   onDecreaseQty,
   onImageClick,
+  onProductClick,
+  onQuickView,
+  onToggleWishlist,
+  isWishlisted = false,
+  showCartActions = true,
+  showQuickView = true,
   cartQty = 0,
 }) {
   console.log("Product:", product.name, "cartQty:", cartQty);
@@ -21,8 +27,14 @@ function InventoryProductCard({
     [product.description, product.quantity, isOutOfStock]
   );
 
-  const handleAddToCart = useCallback(() => {
-    onAddToCart(product);
+  const handleAddToCart = useCallback((event) => {
+    const card = event.currentTarget.closest(".inventory-product-card");
+    const sourceEl =
+      card?.querySelector(".inventory-product-card__image") ||
+      card?.querySelector(".inventory-product-card__placeholder") ||
+      null;
+
+    onAddToCart?.(product, sourceEl);
   }, [onAddToCart, product]);
 
   const handleIncrease = useCallback(() => {
@@ -34,8 +46,17 @@ function InventoryProductCard({
   }, [onDecreaseQty, product]);
 
   const handleImageClick = useCallback(() => {
+    onProductClick?.(product);
     onImageClick?.(product);
-  }, [onImageClick, product]);
+  }, [onImageClick, onProductClick, product]);
+
+  const handleWishlistToggle = useCallback(() => {
+    onToggleWishlist?.(product);
+  }, [onToggleWishlist, product]);
+
+  const handleQuickView = useCallback(() => {
+    onQuickView?.(product);
+  }, [onQuickView, product]);
 
   return (
     <article className="inventory-product-card">
@@ -43,11 +64,13 @@ function InventoryProductCard({
         <span className="inventory-product-card__badge">{category}</span>
         <button
           type="button"
-          className="inventory-product-card__favorite"
-          title="Save product"
-          aria-label={`Save ${product.name}`}
+          className={`inventory-product-card__favorite ${isWishlisted ? "inventory-product-card__favorite--active" : ""}`}
+          title={isWishlisted ? "Remove from wishlist" : "Save to wishlist"}
+          aria-label={`${isWishlisted ? "Remove" : "Save"} ${product.name} ${isWishlisted ? "from" : "to"} wishlist`}
+          aria-pressed={isWishlisted}
+          onClick={handleWishlistToggle}
         >
-          ♡
+          {isWishlisted ? "♥" : "♡"}
         </button>
 
         {product.imageUrl ? (
@@ -74,11 +97,21 @@ function InventoryProductCard({
         <h3 className="inventory-product-card__title">{product.name}</h3>
         <p className="inventory-product-card__description">{description}</p>
 
+        {showQuickView && onQuickView && (
+          <button
+            type="button"
+            className="inventory-product-card__quick-view"
+            onClick={handleQuickView}
+          >
+            Quick View
+          </button>
+        )}
+
         <div className="inventory-product-card__footer">
           <span className="inventory-product-card__price">
             ₹{Number(product.price).toLocaleString()}
           </span>
-          {cartQty > 0 ? (
+          {showCartActions && cartQty > 0 ? (
             <div className="inventory-product-card__qty-controls">
               <button
                 type="button"
@@ -98,7 +131,7 @@ function InventoryProductCard({
                 +
               </button>
             </div>
-          ) : (
+          ) : showCartActions ? (
             <button
               type="button"
               className="inventory-product-card__cart"
@@ -107,6 +140,8 @@ function InventoryProductCard({
             >
               {isOutOfStock ? "Out of Stock" : "Add to Cart"}
             </button>
+          ) : (
+            <span className="inventory-product-card__wishlist-tag">In Wishlist</span>
           )}
         </div>
       </div>

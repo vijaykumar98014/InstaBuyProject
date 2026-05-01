@@ -13,12 +13,6 @@ public class UserClient {
 
 
     public boolean validateUser(Long userId) {
-
-//        String url = "http://localhost:8085/api/users/" + userId;
-//
-//        Object response = restTemplate.getForObject(url, Object.class);
-//
-//        return response != null;
     	return true;
     }
     

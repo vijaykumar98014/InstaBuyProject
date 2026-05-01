@@ -2,7 +2,7 @@ import { createSlice } from "@reduxjs/toolkit";
 
 const getInitialTheme = () => {
   try {
-    return localStorage.getItem("theme") || "dark";
+    return localStorage.getItem("instabuy-theme") || localStorage.getItem("theme") || "dark";
   } catch {
     return "dark";
   }
@@ -16,10 +16,12 @@ const themeSlice = createSlice({
   reducers: {
     setTheme: (state, action) => {
       state.mode = action.payload || "dark";
+      localStorage.setItem("instabuy-theme", state.mode);
       localStorage.setItem("theme", state.mode);
     },
     toggleTheme: (state) => {
       state.mode = state.mode === "dark" ? "light" : "dark";
+      localStorage.setItem("instabuy-theme", state.mode);
       localStorage.setItem("theme", state.mode);
     },
   },

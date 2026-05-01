@@ -26,13 +26,11 @@ public class OrderItem {
     private String imageUrl;
     private String productName;
 
-    // 🔥 VERY IMPORTANT (fix infinite loop)
     @JsonIgnore
     @ManyToOne
     @JoinColumn(name = "order_id")
     private Order order;
 
-    // ---------------- GETTERS & SETTERS ----------------
 
     public Long getId() { return id; }
     public void setId(Long id) { this.id = id; }

@@ -91,24 +91,40 @@ public class OrderServiceImpl implements OrderService {
 
         // SAVE ORDER FIRST
         Order saved = orderRepository.save(order);
+        
 
-     // PAYMENT LOGIC
+        // 🔥 RAZORPAY FLOW
+        if ("RAZORPAY".equalsIgnoreCase(request.getPaymentMethod())) {
+
+            saved.setPaymentStatus("PENDING");
+            saved.setOrderStatus("PENDING_PAYMENT");
+
+            orderRepository.save(saved);
+
+            OrderResponse res = new OrderResponse();
+            res.setOrderId(saved.getOrderId());
+            res.setAmount(total);
+            res.setCartList(cartItems);
+            res.setStatus("PENDING_PAYMENT");
+
+            return res;
+        }
+
+        // PAYMENT LOGIC
         if ("COD".equalsIgnoreCase(request.getPaymentMethod())) {
 
-            // CALL payment service with COD
             paymentClient.processPayment(
-                userId,
-                saved.getOrderId(),
-                total,
-                request.getPaymentMethod()
+                    userId,
+                    saved.getOrderId(),
+                    total,
+                    request.getPaymentMethod()
             );
 
             saved.setPaymentStatus("CASH_ON_DELIVERY");
             saved.setOrderStatus("CONFIRMED");
 
-        } else  {
+        } else {
 
-            // ONLINE → call payment service
             PaymentResponse payment = paymentClient.processPayment(
                     userId,
                     saved.getOrderId(),
@@ -145,7 +161,7 @@ public class OrderServiceImpl implements OrderService {
 
         return res;
     }
-
+    
     @Override
     public Order updateDetails(Long orderId, String address, long phone) {
 

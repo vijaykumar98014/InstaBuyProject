@@ -54,14 +54,7 @@ public class OrderController {
     public ResponseEntity<List<CartItemDTO>> getCart(@PathVariable Long userId) {
         return ResponseEntity.ok(cartManager.getCart(userId));
     }
-//    @DeleteMapping("/cart/remove/{userId}/{productId}")
-//    public ResponseEntity<String> removeFromCart(@PathVariable Long userId,
-//                                                 @PathVariable Long productId) {
-//
-//        cartManager.removeFromCart(userId, productId);
-//        return ResponseEntity.ok("Item removed from cart");
-//    }
-    
+
     @GetMapping("/cart/remove/{userId}/{productId}")
     public ResponseEntity<String> removeFromCart(@PathVariable Long userId,
                                                  @PathVariable Long productId) {

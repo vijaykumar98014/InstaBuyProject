@@ -5,4 +5,6 @@ import com.mphasis.instabuy.paymentservice.entity.Payment;
 
 public interface PaymentRepository extends JpaRepository<Payment, Long> {
 	Payment findByOrderId(Long orderId);
+
+	Payment findByTransactionId(String razorpayOrderId);
 }

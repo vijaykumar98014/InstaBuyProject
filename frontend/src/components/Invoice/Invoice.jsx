@@ -95,7 +95,7 @@ function Invoice({ order }) {
                                     <tr key={item.orderItemId || item.productId || index}>
                                         <td>{index + 1}</td>
 
-                                        {/* 🔥 CHANGE START */}
+
                                         <td>
                                             <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
 
@@ -120,7 +120,6 @@ function Invoice({ order }) {
 
                                             </div>
                                         </td>
-                                        {/* 🔥 CHANGE END */}
 
                                         <td>{item.quantity}</td>
                                         <td>Rs. {formatCurrency(item.price)}</td>

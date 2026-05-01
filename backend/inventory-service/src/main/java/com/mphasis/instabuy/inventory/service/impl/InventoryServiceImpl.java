@@ -33,7 +33,7 @@ public class InventoryServiceImpl implements InventoryService {
                         p.getName(),
                         p.getPrice(),
                         p.getQuantity(),
-                        p.getImageUrl()   // ✅ image added
+                        p.getImageUrl()  
                 ))
                 .collect(Collectors.toList());
     }
@@ -80,12 +80,23 @@ public class InventoryServiceImpl implements InventoryService {
                 .orElseThrow(() -> new ResourceNotFoundException("Product not found"));
     }
 
-    // ✅ NEW METHOD (IMAGE SUPPORT)
     @Override
     public void addProduct(String name, float price, int quantity, MultipartFile file) {
 
         if (price <= 0 || quantity < 0) {
             throw new RuntimeException("Invalid price or quantity");
+        }
+        
+        long maxSize = 10 * 1024 * 1024;
+
+        if (file.getSize() > maxSize) {
+            throw new RuntimeException("File size must be less than 10MB");
+        }
+
+        String contentType = file.getContentType();
+
+        if (contentType == null || !contentType.startsWith("image/")) {
+            throw new RuntimeException("Only image files are allowed");
         }
 
         String original = file.getOriginalFilename().replaceAll("\\s+", "_");
@@ -93,7 +104,7 @@ public class InventoryServiceImpl implements InventoryService {
 
         try {
             Path path = Paths.get("uploads/" + fileName);
-            Files.createDirectories(path.getParent());   // ✅ folder auto create
+            Files.createDirectories(path.getParent());  
             Files.write(path, file.getBytes());
         } catch (Exception e) {
             throw new RuntimeException("Image upload failed");
@@ -104,7 +115,6 @@ public class InventoryServiceImpl implements InventoryService {
         p.setPrice(price);
         p.setQuantity(quantity);
 
-        // ✅ IMPORTANT
         p.setImageUrl("http://localhost:8083/uploads/" + fileName);
 
         repository.save(p);
@@ -128,7 +138,6 @@ public class InventoryServiceImpl implements InventoryService {
         p.setPrice(dto.getPrice());
         p.setQuantity(dto.getQuantity());
 
-        // ❗ image update optional (abhi skip)
         repository.save(p);
     }
 }

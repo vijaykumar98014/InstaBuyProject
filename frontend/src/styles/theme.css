@@ -1,4 +1,5 @@
 /* DARK */
+html[data-theme="dark"],
 body[data-theme="dark"] {
   --bg: #080b14;
   --text: #f8fafc;
@@ -30,6 +31,7 @@ body[data-theme="dark"] {
 }
 
 /* LIGHT */
+html[data-theme="light"],
 body[data-theme="light"] {
   --bg: #f7f8fc;
   --text: #0b1220;
@@ -69,6 +71,25 @@ body {
   color: var(--text);
   min-height: 100vh;
   transition: background 0.3s ease, color 0.3s ease;
+}
+
+body.theme-transition,
+body.theme-transition * {
+  transition:
+    background-color 0.3s ease,
+    color 0.3s ease,
+    border-color 0.3s ease,
+    box-shadow 0.3s ease,
+    fill 0.3s ease,
+    stroke 0.3s ease;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  body,
+  body.theme-transition,
+  body.theme-transition * {
+    transition: none !important;
+  }
 }
 
 .theme-toggle-btn {

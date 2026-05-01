@@ -30,13 +30,6 @@ public class CartManager {
         cart.add(item);
     }
 
-//    public List<CartItemDTO> getCart(Long userId) {
-//    	List<CartItemDTO>listofitem=new ArrayList<>();
-//      return cartData.getOrDefault(userId, new ArrayList<>());
-//    	listofitem=cartData.get(userId);
-//    	return listofitem;
-//    }
-    
     public List<CartItemDTO> getCart(Long userId) {
         return cartData.getOrDefault(userId, new ArrayList<>());
     }

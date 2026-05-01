@@ -1,48 +1,28 @@
-import { memo, useCallback } from "react";
-import { useNavigate } from "react-router-dom";
-import { useDispatch, useSelector } from "react-redux";
+import React, { memo, useCallback, useEffect, useState } from "react";
+import { useLocation, useNavigate } from "react-router-dom";
+import { useSelector } from "react-redux";
 import ThemeToggle from "../ThemeToggle";
-import { toast } from "react-toastify";
-import { clearUser } from "../../redux/userSlice";
-import { clearProducts } from "../../redux/productSlice";
+import NavLinks from "./NavLinks";
+import NotificationBell from "./NotificationBell";
+import ProfileDropdown from "./ProfileDropdown";
+import MobileMenu from "./MobileMenu";
 import "./Navbar.css";
 
-function Navbar({
-  showBackButton = false,
-  backText = "← Home",
-  backPath = "/home",
-  showCount = false,
-  countText = "",
-  showCartButton = true,
-  showOrdersButton = true,
-  showInventoryButton = false,
-  customButtons = []
-}) {
+function Navbar() {
   const navigate = useNavigate();
-  const dispatch = useDispatch();
-  const { role, userName, wallet } = useSelector((state) => state.user);
+  const { pathname } = useLocation();
+  const { role } = useSelector((s) => s.user || {});
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
 
-  const handleLogout = useCallback(() => {
-    dispatch(clearUser());
-    dispatch(clearProducts());
-    toast.success("Logged out successfully");
-    navigate("/login");
-  }, [dispatch, navigate]);
+  const goHome = useCallback(() => navigate("/home"), [navigate]);
 
-  const handleBack = useCallback(() => navigate(backPath), [navigate, backPath]);
-  const handleInventory = useCallback(() => navigate("/inventory"), [navigate]);
-  const handleCart = useCallback(() => navigate("/cart"), [navigate]);
-  const handleOrders = useCallback(() => navigate("/orders"), [navigate]);
+  useEffect(() => {
+    setIsMenuOpen(false);
+  }, [pathname]);
 
   return (
     <nav className="navbar">
-      <div className="navbar__left">
-        {showBackButton && (
-          <button className="navbar__back-btn" onClick={handleBack}>
-            {backText}
-          </button>
-        )}
-
+      <div className="navbar__left" onClick={goHome} role="button" tabIndex={0} onKeyDown={(e) => e.key === "Enter" && goHome()}>
         <div className="navbar__brand">
           <div className="navbar__logo-icon">🛍</div>
           <span className="navbar__logo-text">
@@ -51,59 +31,25 @@ function Navbar({
         </div>
       </div>
 
+      <div className="navbar__center">
+        <NavLinks role={role || "USER"} />
+      </div>
+
       <div className="navbar__right">
-        {showCount && (
-          <span className="navbar__count">{countText}</span>
-        )}
-
-
-        {showInventoryButton && (
-          <button
-            className="navbar__inventory-btn"
-            onClick={handleInventory}
-          >
-            📦 Inventory
-          </button>
-        )}
-
-        {showCartButton && role !== "ADMIN" && (
-          <button className="navbar__cart-btn" onClick={handleCart}>
-            🛒 Cart
-          </button>
-        )}
-
-        {showOrdersButton && (
-          <button className="navbar__orders-btn" onClick={handleOrders}>
-            📋 {role === "ADMIN" ? "Orders" : "My Orders"}
-          </button>
-        )}
-
-        {/* Custom buttons
-        {customButtons.map((btn, index) => (
-          <button
-            key={index}
-            className={btn.className}
-            onClick={btn.onClick}
-          >
-            {btn.text}
-          </button>
-        ))} */}
-
-        
-        <span className="navbar__wallet-badge">
-          💰 ₹{wallet}
-        </span>
-        <span className={`navbar__role-badge ${role === "ADMIN" ? "navbar__role-badge--admin" : "navbar__role-badge--user"}`}>
-          {role === "ADMIN" ? "🛡" : "👤"} {userName}
-        </span>
         <button
-          className="navbar__logout-btn"
-          onClick={handleLogout}
+          className="navbar__menu-btn"
+          aria-label="Toggle navigation menu"
+          aria-expanded={isMenuOpen}
+          onClick={() => setIsMenuOpen((prev) => !prev)}
         >
-          Sign Out
+          ☰
         </button>
+        <NotificationBell />
+        <ProfileDropdown />
         <ThemeToggle />
       </div>
+
+      <MobileMenu role={role || "USER"} isOpen={isMenuOpen} onNavigate={() => setIsMenuOpen(false)} />
     </nav>
   );
 }

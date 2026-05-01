@@ -3,6 +3,8 @@ package com.mphasis.instabuy.paymentservice.controller;
 import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -12,6 +14,7 @@ import com.mphasis.instabuy.paymentservice.dto.PaymentRequest;
 import com.mphasis.instabuy.paymentservice.dto.PaymentResponse;
 import com.mphasis.instabuy.paymentservice.service.PaymentService;
 
+@CrossOrigin(origins = "http://localhost:3000")
 @RestController
 @RequestMapping("/api/payment")
 public class PaymentController {
@@ -43,5 +46,10 @@ public class PaymentController {
         String status = req.get("status").toString();
 
         return paymentService.updatePaymentStatus(orderId, status);
+    }
+    
+    @GetMapping("/admin/revenue")
+    public Double getTotalRevenue() {
+        return paymentService.getTotalRevenue();
     }
 }

@@ -52,6 +52,35 @@ public class PaymentService {
 
             return res;
         }
+        if ("RAZORPAY".equalsIgnoreCase(paymentMethod)) {
+
+            // 🔥 ADD TO ADMIN WALLET
+            Long adminId = getAdminId();
+
+            String addAdminUrl = userServiceBaseUrl
+                    + "/api/users/"
+                    + adminId
+                    + "/wallet/add?amount="
+                    + amount;
+
+            restTemplate.put(addAdminUrl, null);
+
+            Payment payment = new Payment();
+            payment.setUserId(userId);
+            payment.setOrderId(orderId);
+            payment.setAmount(amount);
+            payment.setStatus("SUCCESS");
+            payment.setPaymentMethod("RAZORPAY");
+            payment.setPaymentDate(LocalDateTime.now());
+            payment.setTransactionId("RAZORPAY_DUMMY_" + UUID.randomUUID());
+
+            paymentRepository.save(payment);
+
+            res.setStatus("SUCCESS");
+            res.setTransactionId(payment.getTransactionId());
+
+            return res;
+        }
 
         // WALLET CHECK
         if (user == null || user.getWallet() == null || user.getWallet() < amount) {
@@ -131,5 +160,13 @@ public class PaymentService {
         String url = userServiceBaseUrl + "/api/users/admin";
         UserDTO admin = restTemplate.getForObject(url, UserDTO.class);
         return admin.getId();
+    }
+    
+    public Double getTotalRevenue() {
+        return paymentRepository.findAll()
+                .stream()
+                .filter(payment -> "SUCCESS".equalsIgnoreCase(payment.getStatus()))
+                .mapToDouble(payment -> payment.getAmount() != null ? payment.getAmount() : 0.0)
+                .sum();
     }
 }

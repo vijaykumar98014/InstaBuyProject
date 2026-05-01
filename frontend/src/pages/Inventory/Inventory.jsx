@@ -1,488 +1,348 @@
-import { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
-import { inventoryAPI, orderAPI } from "../../services/api";
+import React, { memo, useCallback, useEffect, useMemo, useRef, useState } from "react";
 import Navbar from "../../components/Navbar/Navbar";
-import { toast } from "react-toastify";
 import ConfirmModal from "../../components/ConfirmModal/ConfirmModal";
-import InventoryProductCard from "../../components/InventoryProductCard/InventoryProductCard";
+import InventoryProductCard from "./components/InventoryProductCard";
+import { useSelector, useDispatch } from "react-redux";
+import { fetchProducts } from "../../redux/productSlice";
+import { useRecentlyViewed, useWishlist } from "../../hooks";
+
+// New imports from refactored structure
+import { useInventory } from "./hooks/useInventory";
+import InventoryFilters from "./components/InventoryFilters";
+import InventoryForm from "./components/InventoryForm";
+import InventoryTable from "./components/InventoryTable";
+import InventorySummary from "./components/InventorySummary";
+import { ProductCardSkeleton } from "./utils/inventoryUtils";
+
 import "./Inventory.css";
-
-// ─── Skeleton Row 
-function SkeletonRow() {
-  return (
-    <tr>
-      {[1, 2, 3, 4].map((i) => (
-        <td key={i} style={{ padding: "18px 20px" }}>
-          <div
-            className="skeleton-cell"
-            style={{ width: i === 3 ? "60px" : "100%" }}
-          />
-        </td>
-      ))}
-    </tr>
-  );
-}
-
-function ProductCardSkeleton() {
-  return (
-    <div className="inv-card-skeleton">
-      <div className="inv-card-skeleton__media" />
-      <div className="inv-card-skeleton__line inv-card-skeleton__line--title" />
-      <div className="inv-card-skeleton__line" />
-      <div className="inv-card-skeleton__footer">
-        <div className="inv-card-skeleton__price" />
-        <div className="inv-card-skeleton__button" />
-      </div>
-    </div>
-  );
-}
-
-// Stock Status Helper 
-function stockStatus(qty) {
-  if (qty <= 0) return { label: "Out of Stock", cls: "inv-stock-badge--out" };
-  if (qty <= 5) return { label: "Low Stock", cls: "inv-stock-badge--low" };
-  return { label: "In Stock", cls: "inv-stock-badge--in" };
-}
 
 // Main Component
 function Inventory() {
-  const [products, setProducts] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [name, setName] = useState("");
-  const [price, setPrice] = useState("");
-  const [quantity, setQuantity] = useState("");
-  const [editId, setEditId] = useState(null);
-  const [confirm, setConfirm] = useState(null);
+  const PAGE_SIZE = 12;
+
+  // Filter state
   const [search, setSearch] = useState("");
-  const [submitting, setSubmitting] = useState(false);
-  const [formOpen, setFormOpen] = useState(false);
-  const [image, setImage] = useState(null);
+  const [debouncedSearch, setDebouncedSearch] = useState("");
+  const [minPrice, setMinPrice] = useState("");
+  const [maxPrice, setMaxPrice] = useState("");
+  const [sortBy, setSortBy] = useState("DEFAULT");
+  const [inStockOnly, setInStockOnly] = useState(false);
 
-  const role = localStorage.getItem("role");
-  const userName = localStorage.getItem("userName");
-  const uid = localStorage.getItem("userId");
-  const wallet = localStorage.getItem("wallet");
+  // UI state
+  const [confirm, setConfirm] = useState(null);
+  const [visibleCount, setVisibleCount] = useState(PAGE_SIZE);
+  const [previewProduct, setPreviewProduct] = useState(null);
+  const [quickViewProduct, setQuickViewProduct] = useState(null);
+  const loadMoreRef = useRef(null);
 
-  //console.log(uid);
-  //console.log(userName);
-  const navigate = useNavigate();
+  // Hooks
+  const { isWishlisted, toggleWishlist, wishlistCount } = useWishlist();
+  const { trackRecentlyViewed } = useRecentlyViewed();
 
-  //  API Calls 
-  const fetchProducts = async () => {
-    setLoading(true);
-    try {
-      const res = await inventoryAPI.get("/api/inventory/products");
-      setProducts(res.data);
-    } catch {
-      toast.error("Failed to load products");
-    } finally {
-      setLoading(false);
+  // Redux
+  const dispatch = useDispatch();
+  const refreshProducts = useCallback(() => {
+    dispatch(fetchProducts());
+  }, [dispatch]);
+
+  const { products, loading } = useSelector((state) => state.products);
+  const { role, userId: uid } = useSelector((state) => state.user);
+  const resolvedUid = uid || localStorage.getItem("userId") || "";
+
+  // Use the inventory hook for all business logic
+  const inventoryHook = useInventory(refreshProducts, resolvedUid);
+  const { name, setName, price, setPrice, quantity, setQuantity, editId, image, setImage, submitting, formOpen, setFormOpen, cart, addProduct, deleteProduct, increaseStock, reduceStock, updateProduct, fetchCartQuantities, addToCart, increaseCartQty, decreaseCartQty, cancelEdit, startEdit, onImageChange, getProductKey } = inventoryHook;
+ 
+  // Preview and quick view handlers
+  const openPreview = useCallback((p) => {
+    if (!p?.imageUrl) return;
+    trackRecentlyViewed(p);
+    setPreviewProduct(p);
+  }, [trackRecentlyViewed]);
+
+  const closePreview = useCallback(() => {
+    setPreviewProduct(null);
+  }, []);
+
+  const openQuickView = useCallback((product) => {
+    setQuickViewProduct(product);
+  }, []);
+
+  const closeQuickView = useCallback(() => {
+    setQuickViewProduct(null);
+  }, []);
+
+  const addFromQuickView = useCallback(() => {
+    if (!quickViewProduct) return;
+    const sourceEl = document.querySelector(".inv-quick-view__image");
+    addToCart(quickViewProduct, sourceEl);
+  }, [addToCart, quickViewProduct]);
+
+  // Load products and cart data
+  useEffect(() => {
+    refreshProducts();
+  }, [refreshProducts]);
+
+  useEffect(() => {
+    fetchCartQuantities();
+  }, [fetchCartQuantities]);
+
+  // Handle Escape key for closing preview
+  useEffect(() => {
+    const onKeyDown = (e) => {
+      if (e.key === "Escape") {
+        closePreview();
+      }
+    };
+
+    window.addEventListener("keydown", onKeyDown);
+    return () => window.removeEventListener("keydown", onKeyDown);
+  }, [closePreview]);
+
+  // Debounce search input
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setDebouncedSearch(search);
+    }, 500);
+
+    return () => clearTimeout(timer);
+  }, [search]);
+
+
+  // Filter and sort products
+  const filtered = useMemo(() => {
+    if (!Array.isArray(products)) return [];
+    
+    const text = debouncedSearch.trim().toLowerCase();
+    const min = minPrice === "" ? null : Number(minPrice);
+    const max = maxPrice === "" ? null : Number(maxPrice);
+
+    let next = [...products];
+
+    if (text.length >= 3) {
+      next = next.filter((p) => p.name.toLowerCase().includes(text));
     }
-  };
 
-  const addProduct = async () => {
-    if (!name || price <= 0 || quantity <= 0) { toast.error("Enter Valid inputs"); return; }
+    if (min !== null && !Number.isNaN(min)) {
+      next = next.filter((p) => Number(p.price) >= min);
+    }
 
-    setSubmitting(true);
-    try {
-      const formData = new FormData();
-      formData.append("name", name);
-      formData.append("price", price);
-      formData.append("quantity", quantity);
-      formData.append("image", image);
-      //console.log(image);
+    if (max !== null && !Number.isNaN(max)) {
+      next = next.filter((p) => Number(p.price) <= max);
+    }
 
-      await inventoryAPI.post("/api/inventory/admin/add", formData, {
-        headers: {
-          "Content-Type": "multipart/form-data"
-        }
-      });
-      toast.success(`"${name}" added to inventory`);
-      clearForm();
-      fetchProducts();
-      setFormOpen(false);
-    } catch { toast.error("Failed to add product"); }
-    finally { setSubmitting(false); }
-  };
+    if (inStockOnly) {
+      next = next.filter((p) => Number(p.quantity) > 0);
+    }
 
-  const deleteProduct = async (id) => {
-    try {
-      await inventoryAPI.delete(`/api/inventory/admin/delete?productId=${id}`);
-      toast.info("Product removed from inventory");
-      fetchProducts();
-    } catch { toast.error("Failed to delete product"); }
-    setConfirm(null);
-  };
+    if (sortBy === "PRICE_LOW_HIGH") {
+      next.sort((a, b) => Number(a.price) - Number(b.price));
+    } else if (sortBy === "PRICE_HIGH_LOW") {
+      next.sort((a, b) => Number(b.price) - Number(a.price));
+    }
 
-  const increaseStock = async (id, pName) => {
-    try {
-      await inventoryAPI.post(`/api/inventory/admin/increase?productId=${id}&quantity=1`);
-      toast.info(`Stock increased for "${pName}"`);
-      fetchProducts();
-    } catch { toast.error("Failed to increase stock"); }
-  };
+    return next;
+  }, [products, debouncedSearch, minPrice, maxPrice, inStockOnly, sortBy]);
 
-  const reduceStock = async (id, pName) => {
-    try {
-      await inventoryAPI.post(`/api/inventory/reduce?productId=${id}&quantity=1`);
-      toast.info(`Stock reduced for "${pName}"`);
-      fetchProducts();
-    } catch { toast.error("Failed to reduce stock"); }
-  };
-
-  const updateProduct = async () => {
-    if (!name || !price || !quantity) { toast.error("All fields are required"); return; }
-    setSubmitting(true);
-    try {
-      await inventoryAPI.post(`/api/inventory/admin/update?id=${editId}`, { name, price, quantity });
-      toast.success(`"${name}" updated successfully`);
-      clearForm();
-      fetchProducts();
-      setFormOpen(false);
-    } catch { toast.error("Failed to update product"); }
-    finally { setSubmitting(false); }
-  };
-
-  const addToCart = async (p) => {
-    const uid = localStorage.getItem("userId");
-    //console.log(uid);
-    if (p.quantity <= 0) { toast.error("Product is out of stock"); return; }
-    try {
-      const { default: axios } = await import("axios");
-      await orderAPI.post(`/api/orders/cart/add/${uid}`, {
-        productId: p.id,
-        quantity: 1,
-        price: p.price,
-        imageUrl: p.imageUrl,     
-        productName: p.name       
-      });
-      toast.success(`"${p.name}" added to cart 🛒`);
-    } catch { toast.error("Failed to add to cart"); }
-  };
-
-  //  Helpers 
-  const clearForm = () => { setEditId(null); setName(""); setPrice(""); setQuantity(""); setImage(null); };
-  const cancelEdit = () => { clearForm(); setFormOpen(false); };
-  const startEdit = (p) => {
-    setEditId(p.id); setName(p.name); setPrice(p.price); setQuantity(p.quantity);
-    setFormOpen(true);
-    window.scrollTo({ top: document.body.scrollHeight, behavior: "smooth" });
-  };
-
-  useEffect(() => { fetchProducts(); }, []);
-
-  const filtered = products.filter((p) =>
-    p.name.toLowerCase().includes(search.toLowerCase())
+  const visibleProducts = useMemo(
+    () => filtered.slice(0, visibleCount),
+    [filtered, visibleCount]
   );
 
-  //  Summary card data 
-  const summaryCards = [
-    { label: "Total Products", value: products.length, icon: "📦", color: "#6c63ff" },
-    { label: "In Stock", value: products.filter((p) => p.quantity > 5).length, icon: "✅", color: "#43e97b" },
-    { label: "Low Stock", value: products.filter((p) => p.quantity > 0 && p.quantity <= 5).length, icon: "⚠️", color: "#f5c842" },
-    { label: "Out of Stock", value: products.filter((p) => p.quantity <= 0).length, icon: "❌", color: "#ff4d6d" },
-  ];
+  const hasMoreProducts = useMemo(
+    () => visibleCount < filtered.length,
+    [visibleCount, filtered.length]
+  );
 
-  //  Action buttons config 
-  const rowActions = (p) => [
-    { emoji: "➕", title: "Add stock", cls: "icon-btn--increase", action: () => increaseStock(p.id, p.name) },
-    { emoji: "➖", title: "Reduce stock", cls: "icon-btn--reduce", action: () => reduceStock(p.id, p.name) },
-    { emoji: "✏️", title: "Edit", cls: "icon-btn--edit", action: () => startEdit(p) },
-    { emoji: "🗑", title: "Delete", cls: "icon-btn--delete", action: () => setConfirm({ id: p.id, name: p.name }) },
-  ];
+  // Reset visible count when filters change
+  useEffect(() => {
+    setVisibleCount(PAGE_SIZE);
+  }, [debouncedSearch, minPrice, maxPrice, inStockOnly, sortBy, role, products.length]);
 
-  //  Form fields config 
-  const formFields = [
-    { label: "Product Name", icon: "📦", value: name, setter: setName, placeholder: "e.g. Nike Air Max", type: "text" },
-    { label: "Price (₹)", icon: "💰", value: price, setter: setPrice, placeholder: "e.g. 2999", type: "number" },
-    { label: "Quantity", icon: "🔢", value: quantity, setter: setQuantity, placeholder: "e.g. 50", type: "number" },
-  ];
+  // Infinite scroll effect
+  useEffect(() => {
+    const node = loadMoreRef.current;
+    if (!node || loading || !hasMoreProducts) return;
+
+    const observer = new IntersectionObserver(
+      (entries) => {
+        if (entries[0]?.isIntersecting) {
+          setVisibleCount((prev) => Math.min(prev + PAGE_SIZE, filtered.length));
+        }
+      },
+      {
+        root: null,
+        rootMargin: "140px 0px",
+        threshold: 0.1,
+      }
+    );
+
+    observer.observe(node);
+    return () => observer.disconnect();
+  }, [filtered.length, hasMoreProducts, loading]);
+
+  // Open add form
+  const openAddForm = useCallback(() => {
+    inventoryHook.clearForm();
+    setFormOpen(true);
+  }, [inventoryHook, setFormOpen]);
+
+  // Filter change handlers
+  const onSearchChange = useCallback((e) => {
+    setSearch(e.target.value);
+  }, []);
+
+  const onMinPriceChange = useCallback((e) => {
+    setMinPrice(e.target.value);
+  }, []);
+
+  const onMaxPriceChange = useCallback((e) => {
+    setMaxPrice(e.target.value);
+  }, []);
+
+  const onSortChange = useCallback((e) => {
+    setSortBy(e.target.value);
+  }, []);
+
+  const onInStockToggle = useCallback((e) => {
+    setInStockOnly(e.target.checked);
+  }, []);
 
   //  Render 
   return (
     <div className="inv-wrapper">
-
-      {/* ── Navbar ─────────────────────────────────────────────── */}
+      {/* Navbar */}
       <Navbar
         showBackButton={true}
         showCount={true}
         countText={`${products.length} products`}
+        showWishlistButton={role !== "ADMIN"}
+        wishlistCount={wishlistCount}
       />
 
       <div className="inv-inner">
-
-
-        {/* ── Page Header ──────────────────────────────────────── */}
+        {/* Page Header */}
         <div className="inv-header">
           <div>
             <h1 className="inv-header__title">Inventory</h1>
             <p className="inv-header__subtitle">
-              {role === "ADMIN" ? "Manage your products, stock and pricing." : "Browse available products."}
+              {role === "ADMIN"
+                ? "Manage your products, stock and pricing."
+                : "Browse available products."}
             </p>
           </div>
           {role === "ADMIN" && !formOpen && (
-            <button className="add-btn" onClick={() => { clearForm(); setFormOpen(true); }}>
+            <button className="add-btn" onClick={openAddForm}>
               + Add Product
             </button>
           )}
         </div>
 
-        {/* ── Search ───────────────────────────────────────────── */}
-        <div className="inv-search">
-          <span className="inv-search__icon">🔍</span>
-          <input
-            className="inv-search__input"
-            placeholder="Search products..."
-            value={search}
-            onChange={(e) => setSearch(e.target.value)}
-          />
-        </div>
+        {/* Filters Component */}
+        <InventoryFilters
+          search={search}
+          onSearchChange={onSearchChange}
+          minPrice={minPrice}
+          onMinPriceChange={onMinPriceChange}
+          maxPrice={maxPrice}
+          onMaxPriceChange={onMaxPriceChange}
+          sortBy={sortBy}
+          onSortChange={onSortChange}
+          inStockOnly={inStockOnly}
+          onInStockToggle={onInStockToggle}
+        />
 
-        {/* ── Product List ─────────────────────────────────────── */}
+        {/* Product List - Admin Table View */}
         {role === "ADMIN" ? (
-          <div className="inv-table-wrap">
-            <table className="inv-table">
-              <thead>
-                <tr>
-                  {["Product Name", "Price", "Stock Status", "Actions"].map((h) => (
-                    <th key={h}>{h}</th>
-                  ))}
-                </tr>
-              </thead>
-              <tbody>
-                {loading ? (
-                  Array(5).fill(0).map((_, i) => <SkeletonRow key={i} />)
-                ) : filtered.length === 0 ? (
-                  <tr>
-                    <td colSpan={4}>
-                      <div className="inv-empty">
-                        <div className="inv-empty__icon">📭</div>
-                        <div className="inv-empty__title">No products found</div>
-                        <div className="inv-empty__sub">
-                          {search ? `No results for "${search}"` : "Add your first product below"}
-                        </div>
-                      </div>
-                    </td>
-                  </tr>
-                ) : (
-                  filtered.map((p, i) => {
-                    //console.log("IMAGE URL:", p.imageUrl);
-                    const { label, cls } = stockStatus(p.quantity);
-                    return (
-                      <tr
-                        key={p.id}
-                        className="inv-row"
-                        style={{ borderBottom: i < filtered.length - 1 ? "1px solid rgba(255,255,255,0.04)" : "none" }}
-                      >
-                        {/* Name */}
-                        <td>
-                          <div className="inv-product-cell">
-                            {p.imageUrl ? (
-                              <img
-                                src={p.imageUrl}
-                                alt={p.name}
-                                style={{
-                                  width: "40px",
-                                  height: "40px",
-                                  objectFit: "cover",
-                                  borderRadius: "6px"
-                                }}
-                              />
-                            ) : (
-                              <div
-                                style={{
-                                  width: "40px",
-                                  height: "40px",
-                                  display: "flex",
-                                  alignItems: "center",
-                                  justifyContent: "center",
-                                  fontSize: "22px",
-                                  background: "rgba(255,255,255,0.05)",
-                                  borderRadius: "6px"
-                                }}
-                              >
-                                📦
-                              </div>
-                            )}
-                            {/* <div className="inv-product-icon">📦</div> */}
-                            <div>
-                              <div className="inv-product-name">{p.name}</div>
-                              <div className="inv-product-id">ID #{p.id}</div>
-                            </div>
-                          </div>
-                        </td>
-
-                        {/* Price */}
-                        <td>
-                          <span className="inv-price">₹{Number(p.price).toLocaleString()}</span>
-                        </td>
-
-                        {/* Stock */}
-                        <td>
-                          <div className="inv-stock-cell">
-                            <span className={`inv-stock-badge ${cls}`}>{label}</span>
-                            <span className="inv-stock-qty">Qty: <b>{p.quantity}</b></span>
-                          </div>
-                        </td>
-
-                        {/* Actions */}
-                        <td>
-                          <div className="inv-actions">
-                            {rowActions(p).map(({ emoji, title, cls: btnCls, action }) => (
-                              <button
-                                key={title}
-                                className={`icon-btn ${btnCls}`}
-                                onClick={action}
-                                title={title}
-                              >
-                                {emoji}
-                              </button>
-                            ))}
-                          </div>
-                        </td>
-                      </tr>
-                    );
-                  })
-                )}
-              </tbody>
-            </table>
-          </div>
+          <InventoryTable
+            products={products}
+            filtered={filtered}
+            visibleProducts={visibleProducts}
+            loading={loading}
+            onIncreaseStock={increaseStock}
+            onReduceStock={reduceStock}
+            onEditProduct={startEdit}
+            onDeleteProduct={(id, name) => setConfirm({ id, name })}
+          />
         ) : (
+          // User Products Grid View
           <div className="inv-user-products">
             {loading ? (
-              Array(8).fill(0).map((_, i) => <ProductCardSkeleton key={i} />)
+              Array(8)
+                .fill(0)
+                .map((_, i) => <ProductCardSkeleton key={i} />)
             ) : filtered.length === 0 ? (
               <div className="inv-user-products__empty">
                 <div className="inv-empty">
                   <div className="inv-empty__icon">📭</div>
                   <div className="inv-empty__title">No products found</div>
                   <div className="inv-empty__sub">
-                    {search ? `No results for "${search}"` : "Products will appear here soon"}
+                    {search
+                      ? `No results for "${search}"`
+                      : "Products will appear here soon"}
                   </div>
                 </div>
               </div>
             ) : (
-              filtered.map((p) => (
-                <InventoryProductCard
-                  key={p.id}
-                  product={p}
-                  onAddToCart={addToCart}
-                />
-              ))
+              visibleProducts.map((p) => {
+                const productKey = getProductKey(p);
+                return (
+                  <InventoryProductCard
+                    key={productKey}
+                    product={p}
+                    onAddToCart={addToCart}
+                    onIncreaseQty={increaseCartQty}
+                    onDecreaseQty={decreaseCartQty}
+                    onImageClick={openPreview}
+                    onProductClick={trackRecentlyViewed}
+                    onQuickView={openQuickView}
+                    onToggleWishlist={toggleWishlist}
+                    isWishlisted={isWishlisted(p)}
+                    cartQty={cart[productKey] || 0}
+                  />
+                );
+              })
             )}
           </div>
         )}
 
-        {/* ── Add / Edit Form ───────────────────────────────────── */}
-        {role === "ADMIN" && formOpen && (
-          <div className="inv-form">
-            <div className="inv-form__header">
-              <div>
-                <h3 className="inv-form__title">
-                  {editId ? "✏️ Update Product" : "✦ Add New Product"}
-                </h3>
-                <p className="inv-form__subtitle">
-                  {editId ? "Modify the product details below" : "Fill in the details to add a new product"}
-                </p>
-              </div>
-              <button className="cancel-btn" onClick={cancelEdit}>✕ Cancel</button>
-            </div>
-
-            <div className="inv-form__grid">
-              {formFields.map(({ label, icon, value, setter, placeholder, type }) => (
-                <div key={label}>
-                  <label className="inv-form__label">{label}</label>
-                  <div className="inv-form__input-wrap">
-                    <span className="inv-form__input-icon">{icon}</span>
-                    <input
-                      className="inv-form__input"
-                      type={type}
-                      placeholder={placeholder}
-                      value={value}
-                      onChange={(e) => setter(e.target.value)}
-                    />
-                  </div>
-                </div>
-              ))}
-            </div>
-            <div className="inv-upload">
-              <label className="inv-form__label">Product Image</label>
-              <label className="inv-upload__box">
-                <input
-                  className="inv-upload__input"
-                  type="file"
-                  accept="image/*"
-                  onChange={(e) => setImage(e.target.files[0] || null)}
-                />
-                <div className="inv-upload__icon">
-                  {image ? "🖼️" : "📤"}
-                </div>
-                <div className="inv-upload__content">
-                  <div className="inv-upload__title">
-                    {image ? "Image Selected" : "Upload Product Image"}
-                  </div>
-                  <div className="inv-upload__sub">
-                    {image
-                      ? image.name
-                      : "Click to choose an image for this product"}
-                  </div>
-                </div>
-                <span className="inv-upload__chip">
-                  {image ? "Change" : "Browse"}
-                </span>
-              </label>
-              {image && (
-                <div className="inv-upload__preview">
-                  <img
-                    src={URL.createObjectURL(image)}
-                    alt="Selected product preview"
-                    className="inv-upload__preview-img"
-                  />
-                  <div className="inv-upload__preview-meta">
-                    <div className="inv-upload__preview-name">{image.name}</div>
-                    <button
-                      type="button"
-                      className="inv-upload__remove"
-                      onClick={() => setImage(null)}
-                    >
-                      Remove image
-                    </button>
-                  </div>
-                </div>
-              )}
-            </div>
-
-            <div className="inv-form__actions">
-              <button
-                className={`submit-btn ${editId ? "submit-btn--edit" : "submit-btn--add"}`}
-                onClick={editId ? updateProduct : addProduct}
-                disabled={submitting}
-              >
-                {submitting ? (
-                  <><span className="spinner" /> Processing...</>
-                ) : editId ? "Update Product" : "Add to Inventory"}
-              </button>
-              <button className="cancel-btn cancel-btn--lg" onClick={cancelEdit}>Cancel</button>
-            </div>
+        {/* Infinite Scroll Trigger */}
+        {!loading && hasMoreProducts && (
+          <div
+            ref={loadMoreRef}
+            className="inv-infinite-sentinel"
+            aria-live="polite"
+          >
+            <span className="inv-infinite-loader" />
+            <span>Loading more products...</span>
           </div>
         )}
 
-        {/* ── Summary Cards ─────────────────────────────────────── */}
-        <div className="inv-summary">
-          {summaryCards.map(({ label, value, icon, color }) => (
-            <div key={label} className="inv-summary__card">
-              <span className="inv-summary__icon">{icon}</span>
-              <div>
-                <div className="inv-summary__value" style={{ color }}>{value}</div>
-                <div className="inv-summary__label">{label}</div>
-              </div>
-            </div>
-          ))}
-        </div>
+        {/* Add / Edit Form Component */}
+        {role === "ADMIN" && formOpen && (
+          <InventoryForm
+            editId={editId}
+            name={name}
+            setName={setName}
+            price={price}
+            setPrice={setPrice}
+            quantity={quantity}
+            setQuantity={setQuantity}
+            image={image}
+            setImage={setImage}
+            submitting={submitting}
+            onImageChange={onImageChange}
+            onAddProduct={addProduct}
+            onUpdateProduct={updateProduct}
+            onCancel={cancelEdit}
+          />
+        )}
 
+        {/* Summary Cards Component */}
+        <InventorySummary products={products} />
       </div>
 
-      {/* ── Modals & Toasts ──────────────────────────────────────── */}
+      {/* Modals */}
       {confirm && (
         <ConfirmModal
           message={`Are you sure you want to delete "${confirm.name}"? This action cannot be undone.`}
@@ -490,8 +350,108 @@ function Inventory() {
           onCancel={() => setConfirm(null)}
         />
       )}
+
+      {/* Image Preview Modal */}
+      {previewProduct?.imageUrl && (
+        <div
+          className="inventory-image-modal"
+          onClick={closePreview}
+          role="presentation"
+        >
+          <div
+            className="inventory-image-modal__dialog"
+            onClick={(e) => e.stopPropagation()}
+            role="dialog"
+            aria-modal="true"
+            aria-label={`${previewProduct.name} image preview`}
+          >
+            <button
+              type="button"
+              className="inventory-image-modal__close"
+              onClick={closePreview}
+              aria-label="Close image preview"
+            >
+              ✕
+            </button>
+            <div className="inventory-image-modal__image-wrap">
+              <img
+                src={previewProduct.imageUrl}
+                alt={previewProduct.name}
+                className="inventory-image-modal__img"
+              />
+            </div>
+            <div className="inventory-image-modal__meta">
+              <h3 className="inventory-image-modal__title">
+                {previewProduct.name}
+              </h3>
+              <p className="inventory-image-modal__sub">
+                Click outside or press Esc to close.
+              </p>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Quick View Modal */}
+      {quickViewProduct && (
+        <div
+          className="inv-quick-view"
+          onClick={closeQuickView}
+          role="presentation"
+        >
+          <div
+            className="inv-quick-view__dialog"
+            onClick={(e) => e.stopPropagation()}
+            role="dialog"
+            aria-modal="true"
+            aria-label={`${quickViewProduct.name} quick view`}
+          >
+            <button
+              type="button"
+              className="inv-quick-view__close"
+              onClick={closeQuickView}
+              aria-label="Close quick view"
+            >
+              ✕
+            </button>
+
+            <div className="inv-quick-view__content">
+              <div className="inv-quick-view__media">
+                {quickViewProduct.imageUrl ? (
+                  <img
+                    src={quickViewProduct.imageUrl}
+                    alt={quickViewProduct.name}
+                    className="inv-quick-view__image"
+                  />
+                ) : (
+                  <div className="inv-quick-view__placeholder">📦</div>
+                )}
+              </div>
+
+              <div className="inv-quick-view__info">
+                <h3 className="inv-quick-view__title">
+                  {quickViewProduct.name}
+                </h3>
+                <p className="inv-quick-view__price">
+                  ₹{Number(quickViewProduct.price || 0).toLocaleString()}
+                </p>
+                <button
+                  type="button"
+                  className="inv-quick-view__cart-btn"
+                  onClick={addFromQuickView}
+                  disabled={Number(quickViewProduct.quantity || 0) <= 0}
+                >
+                  {Number(quickViewProduct.quantity || 0) <= 0
+                    ? "Out of Stock"
+                    : "Add to Cart"}
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
 
-export default Inventory;
+export default memo(Inventory);
